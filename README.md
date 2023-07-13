@@ -1,13 +1,13 @@
-<h1 align='center'>WebToolKit [WTK] </h1>
+<h1 align='center'>Web Tools </h1>
 
 <br><hr><br>
 
-## What is WebToolKit?
+## What is Web Tools?
 - Simple yet powerful tool for web developers, pentesters and hackers.
 - A multi-purpose & all-in-one tool.
 
 ## Features:
-- [ ] Web Browser Fingerprinting
+- [x] Web Browser Fingerprinting
 - [ ] Basic Encoding/Decoding (Base64, Hex, etc.)
 
 
