@@ -25,4 +25,4 @@
 ##### To host on GitHub Pages, follow these steps:
 - Fork this repository
 - Goto Settings > GitHub Pages > Source > Select `master` branch
-- Wait for few minutes, and your website will be live at `https://<your-username>.github.io/WebToolKit/`
+- Wait for few minutes, and your website will be live at `https://<your-username>.github.io/webtools/`
