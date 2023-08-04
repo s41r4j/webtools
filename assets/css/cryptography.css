@@ -1,0 +1,182 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .heading {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .initials {
+    font-weight: bold;
+    color: #ff0000;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 5px;
+  }
+  
+  textarea,
+  select {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  #outputText {
+    min-height: 100px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  #copyButton {
+    align-self: flex-end;
+  }
+  
+  #popUpMessage {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 3px;
+    z-index: 999;
+  }
+  
+  #popUpMessage.show {
+    display: block;
+    animation: fadeInOut 2s;
+  }
+
+  #invalidPopUp {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: #af4c4c;
+    color: white;
+    padding: 10px;
+    border-radius: 3px;
+    z-index: 999;
+  }
+  
+  #invalidPopUp.show {
+    display: block;
+    animation: fadeInOut 2s;
+  }
+
+  .input-container {
+    position: relative;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+       
+  .toggle-container {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    top: -30px;
+  }
+
+  .toggle {
+    position: absolute;
+    width: 60px;
+    height: 30px;
+    background-color: #e6e6e6;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .toggle::before {
+    content: "OFF";
+  }
+
+  #passwordToggle:checked + .toggle::before {
+    content: "ON";
+  }
+
+  #passwordToggle:checked + .toggle {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .slider {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s;
+  }
+
+  #passwordToggle:checked + .toggle .slider {
+    left: 32px;
+  }
+
+  .checkbox {
+    display: none;
+  }
+
+
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
