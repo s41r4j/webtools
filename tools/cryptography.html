@@ -17,12 +17,18 @@
         <textarea id="inputText" placeholder="Enter your text..."></textarea>
       </div>
 
+      <label for="inputSalt" id="saltLabel">Salt:</label>
+      <div class="input-container">
+        <textarea id="inputSalt" placeholder="Enter your salt..."></textarea>
+      </div>
+
       <label for="cryptoOption">Select an Encryption:</label>
       <select id="cryptoOption">
         <option value="md5">MD5</option>
         <option value="sha1">SHA-1</option>
         <option value="sha256">SHA-256</option>
         <option value="sha512">SHA-512</option>
+        <option value="zcrypt">Zcrypt</option>
         <option value="base64">Base64 Encode</option>
         <option value="base64Decode">Base64 Decode</option>
         <option value="rot13">ROT13</option>
@@ -39,13 +45,13 @@
           <div class="slider"></div>
         </label>
       </div>
-      
     </form>
 
     <div id="popUpMessage">Copied!</div>
   </div>
 
   <script src="../assets/js/crypto-js.min.js"></script>
+  <script src="../assets/js/zcrypt.js"></script>
   <script src="../assets/js/cryptography.js"></script>
 </body>
 
