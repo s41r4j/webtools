@@ -1,0 +1,213 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100vh;
+}
+
+.box {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 50vw;
+    margin-top: 10%;
+}
+
+@media only screen and (max-width: 768px) {
+    .box {
+        width: 80vw;
+    }
+}
+
+.heading {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.initials {
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+button {
+    background-color: transparent;
+    border: 2px solid #4CAF50;
+    border-radius: 3px;
+    color: #4CAF50;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s, background-color 0.3s;
+    font-weight: bold;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+button:hover {
+    border-color: #45a049;
+    color: #45a049;
+    background-color: rgba(68, 175, 90, 0.1);
+    transform: scale(1.05);
+}
+
+#copyButton {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+#copyButton:hover {
+    border-color: #e67e22;
+    color: #e67e22;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+#clearAllButton {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+#clearAllButton:hover {
+    border-color: #c0392b;
+    color: #c0392b;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+#blastButton {
+    border-color: #cde73c;
+    color: #cde73c;
+}
+
+#blastButton:hover {
+    border-color: #cbd62c;
+    color: #cbd62c;
+    background-color: rgba(214, 231, 60, 0.1);
+}
+
+.added-urls {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.custom-link {
+    margin-top: 15px;
+    padding: 10px;
+    color: #525252;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    font-size: 16px;
+    max-height: 100px; 
+    overflow: auto; 
+}
+
+.custom-link span {
+    margin: 5px 0;
+}
+
+.url-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc; /* Add a border-bottom */
+}
+
+.url-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wrap-text {
+    display: block;
+    max-width: 70%;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-button,
+.blacklist-button {
+    background: none;
+    border: none;
+    font-size: 10px;
+    cursor: pointer;
+    transition: color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    text-decoration: none;
+}
+
+.blacklist-button {
+    color: #000000;
+}
+
+.blacklist-button:hover {
+    color: #00ac42;
+}
+
+.remove-button:hover {
+    color: #cc0000;
+}
+
+span.blacklisted {
+    color: #999;
+    text-decoration: line-through;
+}
+
+#popUpMessage {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 3px;
+    z-index: 999;
+    font-size: 14px;
+}
+
+#popUpMessage.show {
+    display: block;
+    animation: fadeInOut 2s;
+}
