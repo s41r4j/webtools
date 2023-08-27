@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
             updateAddedUrls();
             urlInput.value = "";
         }
+
+        urlInput.focus();
     });
 
     addedUrlsContainer.addEventListener("click", function (event) {
