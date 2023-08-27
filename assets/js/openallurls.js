@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (blastParamValue === 'true') {
             urls.forEach(function (url) {
                 if (!url.blacklisted) {
+                    if (!url.url.match(/^[a-zA-Z]+:\/\//))
+                        url.url = 'http://' + url.url;
                     window.open(url.url, "_blank");
                 }
             });
@@ -71,6 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
     openAllButton.addEventListener("click", function () {
         urls.forEach(function (url) {
             if (!url.blacklisted) {
+                if (!url.url.match(/^[a-zA-Z]+:\/\//))
+                        url.url = 'http://' + url.url;
                 window.open(url.url, "_blank");
             }
         });
