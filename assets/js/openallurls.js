@@ -73,8 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
     openAllButton.addEventListener("click", function () {
         urls.forEach(function (url) {
             if (!url.blacklisted) {
+                console.log(url.url)
                 if (!url.url.match(/^[a-zA-Z]+:\/\//))
                         url.url = 'http://' + url.url;
+                console.log(url.url)
                 window.open(url.url, "_blank");
             }
         });
