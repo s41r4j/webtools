@@ -30,9 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (blastParamValue === 'true') {
             urls.forEach(function (url) {
                 if (!url.blacklisted) {
+                    var link = url.url
                     if (!url.url.match(/^[a-zA-Z]+:\/\//))
-                        url.url = 'http://' + url.url;
-                    window.open(url.url, "_blank");
+                            link = 'http://' + url.url;
+                    window.open(link, "_blank");
                 }
             });
             blastButton.classList.toggle("active");
@@ -73,11 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
     openAllButton.addEventListener("click", function () {
         urls.forEach(function (url) {
             if (!url.blacklisted) {
-                console.log(url.url)
+                var link = url.url
                 if (!url.url.match(/^[a-zA-Z]+:\/\//))
-                        url.url = 'http://' + url.url;
-                console.log(url.url)
-                window.open(url.url, "_blank");
+                        link = 'http://' + url.url;
+                window.open(link, "_blank");
             }
         });
     });
