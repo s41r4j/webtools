@@ -22,7 +22,7 @@ body {
     justify-content: center;
     align-items: center;
     height: calc(100vh - 200px); /* Adjust the height calculation as needed */
-    margin-top: 10px; /* Adjust the margin-top value as desired */
+    margin-top: 50px; /* Adjust the margin-top value as desired */
 }
 
 .card {
@@ -57,14 +57,44 @@ body {
     font-size: 18px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1040px) {
     .container {
       flex-direction: column;
       align-items: center;
-      margin-top: 12%;
+      margin-top: 25%;
     }
   
     .card {
       width: 100%;
     }
-  }
+}
+
+@media screen and (max-width: 850px) {
+    .container {
+      margin-top: 32%;
+    }
+}
+
+@media screen and (max-width: 680px) {
+    .container {
+      margin-top: 37%;
+    }
+}
+
+@media screen and (max-width: 580px) {
+    .container {
+      margin-top: 47%;
+    }
+}
+
+@media screen and (max-width: 440px) {
+    .container {
+      margin-top: 57%;
+    }
+}
+
+@media screen and (max-width: 340px) {
+    .container {
+      margin-top: 65%;
+    }
+}
