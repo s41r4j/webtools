@@ -9,6 +9,7 @@
 ## Features:
 - [x] Web Browser Fingerprinting
 - [x] Basic Encoding/Decoding (Base64, Hex, etc.)
+- [x] Url Crafts (modify, customize & play with urls)
 
 <br>
 
