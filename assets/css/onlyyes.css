@@ -1,0 +1,91 @@
+/* First fetch a bunch of subsets from Google */
+
+@import url('https://fonts.googleapis.com/css?family=Arbutus&text=ABCabc');
+@import url('https://fonts.googleapis.com/css?family=Rye&text=Dd');
+@import url('https://fonts.googleapis.com/css?family=Jolly+Lodger&text=EFef');
+@import url('https://fonts.googleapis.com/css?family=Henny+Penny&text=GHgh');
+@import url('https://fonts.googleapis.com/css?family=Pirata+One&text=Ii');
+@import url('https://fonts.googleapis.com/css?family=Luckiest+Guy&text=JKLjkl');
+@import url('https://fonts.googleapis.com/css?family=McLaren&text=MNmn');
+@import url('https://fonts.googleapis.com/css?family=Ribeye&text=Oo');
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC&text=PQpq');
+@import url('https://fonts.googleapis.com/css?family=New+Rocker&text=Rr');
+@import url('https://fonts.googleapis.com/css?family=Finger+Paint&text=STUstu');
+@import url('https://fonts.googleapis.com/css?family=Fredoka+One&text=VWXvwx');
+@import url('https://fonts.googleapis.com/css?family=Sigmar+One&text=YZyz');
+@import url('https://fonts.googleapis.com/css?family=Nova+Cut&text=%21%22%24');
+@import url('https://fonts.googleapis.com/css?family=Miltonian&text=%26%2A%28%29');
+@import url('https://fonts.googleapis.com/css?family=Irish+Grover&text=%2D%2B');
+@import url('https://fonts.googleapis.com/css?family=Black+Ops+One&text=%40%3D%7E');
+@import url('https://fonts.googleapis.com/css?family=Bubblegum+Sans');
+
+/* The non-editable content font stack */
+
+body {
+    font-family: Arbutus, Rye, Henny Penny, Luckiest Guy, McLaren, Bowlby One SC, Finger Paint, Fredoka One, Sigmar One, Chewy, Nova Cut, Miltonian, Irish Grover, Black Ops One, Diplomata SC, Pirata One, Ribeye, New Rocker, Bubblegum Sans, Georgia, serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* The rest is just generic stuff */
+
+.main-container {
+    max-width: 20em;
+    margin: 2em auto;
+    font-size: 3em;
+    word-spacing: 0.25em;
+    border: 2px solid;
+    text-align: center;
+    position: relative;
+    padding: 1em;
+    line-height: 1.125;
+}
+
+.main-container:focus {
+    border: 3px solid;
+}
+
+.footer {
+    color: grey;
+    margin-top: auto;
+    padding: 20px;
+    font-size: 14px;
+    font-family: monospace, 'Courier New', Courier;
+}
+
+
+.option-btn {
+    margin-top: 15%;
+    padding: 15px 30px;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#yes {
+    background-color: #4CAF50;
+    position: absolute;
+    left: calc(50% - 160px); /* Adjust the left position to create space */
+}
+
+#no {
+    background-color: #e74c3c;
+    cursor: not-allowed;
+    position: absolute;
+    left: calc(50% + 60px); /* Adjust the left position to create space */
+}
+
+#yes:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+#no:hover {
+    background-color: #c0392b;
+}
