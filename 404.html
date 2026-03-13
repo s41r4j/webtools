@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <!-- 
+      GitHub Pages 404 Redirect Hack
+      This script captures the current URL on a 404 hit and redirects the browser
+      to the index.html page while passing along the requested path and query string.
+    -->
+    <script type="text/javascript">
+        var pathSegmentsToKeep = 0; // usually 1 for github pages (e.g. /webtools/), but 0 for custom domains where the site is at the root
+
+        // We will check if we are on github.io or a custom domain
+        if (window.location.hostname.includes("github.io")) {
+            pathSegmentsToKeep = 1;
+        }
+
+        var l = window.location;
+        var repoPath = l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/';
+
+        var newPath = l.pathname.slice(1);
+
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            repoPath + '?p=/' + newPath.replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>

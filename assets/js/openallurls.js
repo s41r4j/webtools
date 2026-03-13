@@ -1,153 +1,236 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const urlInput = document.getElementById("urlInput");
-    const addUrlButton = document.getElementById("addUrlButton");
-    const addedUrlsContainer = document.querySelector(".added-urls");
-    const customLinkContent = document.getElementById("customLinkContent");
-    const openAllButton = document.getElementById("openAllButton");
-    const copyButton = document.getElementById("copyButton");
-    const clearAllButton = document.getElementById("clearAllButton");
-    const blastButton = document.getElementById("blastButton");
-    const popUpMessage = document.getElementById("popUpMessage");
+(function initOpenAllUrls() {
+    const urlInput = document.getElementById('urlInput');
+    const addUrlButton = document.getElementById('addUrlButton');
+    const addedUrlsContainer = document.querySelector('.added-urls');
+    const customLinkContent = document.getElementById('customLinkContent');
+    const openAllButton = document.getElementById('openAllButton');
+    const copyButton = document.getElementById('copyButton');
+    const clearAllButton = document.getElementById('clearAllButton');
+    const blastButton = document.getElementById('blastButton');
+    const popUpMessage = document.getElementById('popUpMessage');
+    const urlStatus = document.getElementById('urlStatus');
+
+    if (!urlInput || !addUrlButton || !addedUrlsContainer || !customLinkContent) return;
 
     let urls = [];
+    let blastEnabled = false;
+    let messageTimer = null;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlParamValue = urlParams.get('urls');
-    const blastParamValue = urlParams.get('blast');
+    function showPopUpMessage(message) {
+        if (!popUpMessage) return;
 
-    if (urlParamValue) {
-        const urlList = urlParamValue.split(' ').map(url => {
-            const parts = url.split(':');
-            return {
-                url: parts[0].replace(/"/g, ''),
-                blacklisted: parts[1].replace(/"/g, '') === 'true'
-            };
-        });
-        urls = urlList;
-        updateAddedUrls();
-        updateCustomLink();
+        popUpMessage.textContent = message;
+        popUpMessage.classList.add('show');
 
-        if (blastParamValue === 'true') {
-            urls.forEach(function (url) {
-                if (!url.blacklisted) {
-                    var link = url.url
-                    if (!url.url.match(/^[a-zA-Z]+:\/\//))
-                            link = 'http://' + url.url;
-                    window.open(link, "_blank");
-                }
-            });
-            blastButton.classList.toggle("active");
-            updateCustomLink();
+        if (messageTimer) {
+            clearTimeout(messageTimer);
         }
+
+        messageTimer = setTimeout(function () {
+            popUpMessage.classList.remove('show');
+        }, 1800);
     }
 
-    addUrlButton.addEventListener("click", function () {
-        const url = urlInput.value.trim();
+    function normalizeOpenUrl(url) {
+        return /^[a-zA-Z]+:\/\//.test(url) ? url : `http://${url}`;
+    }
 
-        if (url !== "") {
-            urls.push({ url, blacklisted: false });
-            updateCustomLink();
-            updateAddedUrls();
-            urlInput.value = "";
-        }
+    function parseSharedUrls(value) {
+        if (!value) return [];
 
-        urlInput.focus();
-    });
+        return value
+            .split('|')
+            .map(function (entry) {
+                const [encodedUrl, blacklistFlag] = entry.split('::');
+                if (!encodedUrl) return null;
 
-    addedUrlsContainer.addEventListener("click", function (event) {
-        if (event.target.classList.contains("remove-button")) {
-            const index = parseInt(event.target.getAttribute("data-index"));
-            if (!isNaN(index)) {
-                urls.splice(index, 1);
-                updateCustomLink();
-                updateAddedUrls();
-            }
-        }
-        if (event.target.classList.contains("blacklist-button")) {
-            const index = parseInt(event.target.getAttribute("data-index"));
-            if (!isNaN(index)) {
-                urls[index].blacklisted = !urls[index].blacklisted;
-                updateCustomLink();
-                updateAddedUrls();
-            }
-        }
-    });
+                return {
+                    url: decodeURIComponent(encodedUrl),
+                    blacklisted: blacklistFlag === '1'
+                };
+            })
+            .filter(Boolean);
+    }
 
-    openAllButton.addEventListener("click", function () {
-        urls.forEach(function (url) {
-            if (!url.blacklisted) {
-                var link = url.url
-                if (!url.url.match(/^[a-zA-Z]+:\/\//))
-                        link = 'http://' + url.url;
-                window.open(link, "_blank");
-            }
-        });
-    });
-
-    copyButton.addEventListener("click", function () {
-        const tempTextArea = document.createElement("textarea");
-        const customLink = getCustomLink();
-        tempTextArea.value = customLink;
-        document.body.appendChild(tempTextArea);
-        tempTextArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempTextArea);
-        showPopUpMessage("Copied!");
-    });
-
-    clearAllButton.addEventListener("click", function () {
-        urls = [];
-        updateCustomLink();
-        updateAddedUrls();
-    });
-
-    blastButton.addEventListener("click", function () {
-        blastButton.classList.toggle("active");
-        updateCustomLink();
-    });
-
-    function updateCustomLink() {
-        const customLink = getCustomLink();
-        customLinkContent.innerHTML = customLink;
+    function serializeSharedUrls() {
+        return urls
+            .map(function (entry) {
+                return `${encodeURIComponent(entry.url)}::${entry.blacklisted ? '1' : '0'}`;
+            })
+            .join('|');
     }
 
     function getCustomLink() {
-        const urlList = urls.map(url => `${url.url}:${url.blacklisted}`).join('+');
-        const blastValue = blastButton.classList.contains("active") ? 'true' : 'false';
-        const blastPart = blastValue === 'true' ? '&blast=true' : '';
-        return `https://s41r4j.github.io/webtools/tools/openallurls.html?urls="${urlList}"${blastPart}`;
+        const params = new URLSearchParams();
+        const serialized = serializeSharedUrls();
+
+        if (serialized) {
+            params.set('urls', serialized);
+        }
+
+        if (blastEnabled) {
+            params.set('blast', 'true');
+        }
+
+        const queryString = params.toString();
+        return `${window.location.origin}${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
+    }
+
+    function updateBlastButton() {
+        if (!blastButton) return;
+
+        blastButton.textContent = blastEnabled ? 'Blast On' : 'Blast';
+        blastButton.classList.toggle('tool-button--accent', blastEnabled);
+        blastButton.classList.toggle('tool-button--ghost', !blastEnabled);
+        blastButton.setAttribute('aria-pressed', String(blastEnabled));
+    }
+
+    function updateStatus() {
+        if (!urlStatus) return;
+
+        if (!urls.length) {
+            urlStatus.textContent = 'No links collected yet.';
+            return;
+        }
+
+        const blacklistedCount = urls.filter(function (entry) {
+            return entry.blacklisted;
+        }).length;
+
+        const launchCount = urls.length - blacklistedCount;
+        urlStatus.innerHTML = `<strong>${launchCount}</strong> ready to launch, <strong>${blacklistedCount}</strong> currently skipped.`;
+    }
+
+    function updateCustomLink() {
+        customLinkContent.textContent = getCustomLink();
     }
 
     function updateAddedUrls() {
-        addedUrlsContainer.innerHTML = "";
-        urls.forEach(function (url, index) {
-            const listItem = document.createElement("div");
-            listItem.classList.add("url-item");
+        addedUrlsContainer.innerHTML = '';
+
+        urls.forEach(function (entry, index) {
+            const listItem = document.createElement('div');
+            listItem.className = 'url-item';
             listItem.innerHTML = `
-                <div class="url-container">
-                    <span class="wrap-text ${url.blacklisted ? 'blacklisted' : ''}">${url.url}</span>
-                    <div class="button-container">
-                        <button class="remove-button" data-index="${index}">Remove</button>
-                        <button class="blacklist-button" data-index="${index}"
-                            onmouseover="this.style.color='${url.blacklisted ? '#00ac42' : '#cc0000'}';"
-                            onmouseout="this.style.color='black';">
-                            ${url.blacklisted ? 'Whitelist' : 'Blacklist'}
+                <div class="url-row">
+                    <div>
+                        <div class="url-meta">
+                            <span>Entry ${String(index + 1).padStart(2, '0')}</span>
+                            <span>${entry.blacklisted ? 'Skipped' : 'Launchable'}</span>
+                        </div>
+                        <div class="url-address ${entry.blacklisted ? 'blacklisted' : ''}">${entry.url}</div>
+                    </div>
+                    <div class="url-actions">
+                        <button class="blacklist-button" data-action="toggle" data-index="${index}" type="button">
+                            ${entry.blacklisted ? 'Restore' : 'Skip'}
                         </button>
+                        <button class="remove-button" data-action="remove" data-index="${index}" type="button">Remove</button>
                     </div>
                 </div>
             `;
+
             addedUrlsContainer.appendChild(listItem);
         });
     }
 
-    function showPopUpMessage(message, color) {
-        popUpMessage.textContent = message;
-        popUpMessage.style.backgroundColor = color || "#4CAF50";
-        popUpMessage.classList.add("show");
-        setTimeout(function () {
-            popUpMessage.classList.remove("show");
-        }, 2000);
+    function addCurrentUrl() {
+        const value = urlInput.value.trim();
+        if (!value) return;
+
+        urls.push({ url: value, blacklisted: false });
+        urlInput.value = '';
+        updateAddedUrls();
+        updateCustomLink();
+        updateStatus();
+        urlInput.focus();
+    }
+
+    function clearAll() {
+        urls = [];
+        updateAddedUrls();
+        updateCustomLink();
+        updateStatus();
+    }
+
+    function openUrls() {
+        urls.forEach(function (entry) {
+            if (!entry.blacklisted) {
+                window.open(normalizeOpenUrl(entry.url), '_blank', 'noopener');
+            }
+        });
+    }
+
+    async function copyCustomLink() {
+        const customLink = getCustomLink();
+
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(customLink);
+            } else {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = customLink;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+            }
+
+            showPopUpMessage('Copied to clipboard.');
+        } catch (error) {
+            console.error('Copy failed:', error);
+            showPopUpMessage('Unable to copy.');
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urls = parseSharedUrls(urlParams.get('urls'));
+    blastEnabled = urlParams.get('blast') === 'true';
+
+    addUrlButton.addEventListener('click', addCurrentUrl);
+    openAllButton?.addEventListener('click', openUrls);
+    copyButton?.addEventListener('click', copyCustomLink);
+    clearAllButton?.addEventListener('click', clearAll);
+    blastButton?.addEventListener('click', function () {
+        blastEnabled = !blastEnabled;
+        updateBlastButton();
+        updateCustomLink();
+    });
+
+    urlInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addCurrentUrl();
+        }
+    });
+
+    addedUrlsContainer.addEventListener('click', function (event) {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+
+        const index = Number(button.getAttribute('data-index'));
+        if (Number.isNaN(index) || !urls[index]) return;
+
+        if (button.dataset.action === 'remove') {
+            urls.splice(index, 1);
+        }
+
+        if (button.dataset.action === 'toggle') {
+            urls[index].blacklisted = !urls[index].blacklisted;
+        }
+
+        updateAddedUrls();
+        updateCustomLink();
+        updateStatus();
+    });
+
+    updateBlastButton();
+    updateAddedUrls();
+    updateCustomLink();
+    updateStatus();
+
+    if (blastEnabled && urls.length) {
+        setTimeout(openUrls, 80);
     }
 
     urlInput.focus();
-});
+})();

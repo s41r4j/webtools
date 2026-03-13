@@ -1,194 +1,133 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    position: relative;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
+.crypto-layout {
+    align-items: start;
+}
 
-  .heading {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .initials {
-    font-weight: bold;
-    color: #ff0000;
-  }
-  
-  form {
+.paper-form,
+.output-panel {
+    align-content: start;
+}
+
+#inputText {
+    min-height: 16rem;
+}
+
+#inputSalt {
+    min-height: 8rem;
+}
+
+#inputSalt:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: rgba(24, 22, 18, 0.04);
+}
+
+body.night-mode #inputSalt:disabled {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+#outputText {
+    min-height: 22rem;
+    background: rgba(24, 22, 18, 0.04);
+}
+
+body.night-mode #outputText {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.panel-toolbar {
     display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    margin-bottom: 5px;
-  }
-  
-  textarea,
-  select {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  
-  textarea {
-    resize: none;
-  }
-  
-  #outputText {
-    min-height: 100px;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  #copyButton {
-    align-self: flex-end;
-  }
-  
-  #popUpMessage {
-    display: none;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    border-radius: 3px;
-    z-index: 999;
-  }
-  
-  #popUpMessage.show {
-    display: block;
-    animation: fadeInOut 2s;
-  }
-
-  #invalidPopUp {
-    display: none;
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: #af4c4c;
-    color: white;
-    padding: 10px;
-    border-radius: 3px;
-    z-index: 999;
-  }
-  
-  #invalidPopUp.show {
-    display: block;
-    animation: fadeInOut 2s;
-  }
-
-  .input-container {
-    position: relative;
-  }
-
-  .input-container .blurred::selection,
-  .input-container .blurred {
-    color: transparent;
-    text-shadow: 0 0 8px rgba(0,0,0,0.5);
-  }
-  
-  .input-container .blurred:not(:focus)::placeholder,
-  .input-container .blurred::placeholder {
-    color: initial;
-    text-shadow: none;
-  }
-
-  input[type="text"],
-  textarea {
-    width: 100%;
-    box-sizing: border-box;
-  }
-       
-  .toggle-container {
-    display: inline-block;
-    position: relative;
-    width: 60px;
-    top: -30px;
-  }
-
-  .toggle {
-    position: absolute;
-    width: 60px;
-    height: 30px;
-    background-color: #e6e6e6;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    font-size: 12px;
-    color: #888;
-  }
+    justify-content: space-between;
+    gap: 12px;
+}
 
-  .toggle::before {
-    content: "OFF";
-  }
+.privacy-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px dashed var(--rule-strong);
+    color: var(--ink-soft);
+}
 
-  #passwordToggle:checked + .toggle::before {
-    content: "ON";
-  }
+.toggle-container {
+    position: relative;
+    width: 3.5rem;
+    height: 2rem;
+    flex: 0 0 auto;
+}
 
-  #passwordToggle:checked + .toggle {
-    background-color: #4CAF50;
-    color: white;
-  }
-
-  .slider {
+.checkbox {
     position: absolute;
-    width: 26px;
-    height: 26px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggle {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1px solid var(--rule-strong);
+    background: rgba(24, 22, 18, 0.08);
+    cursor: pointer;
+}
+
+.toggle::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 1.4rem;
+    height: 1.4rem;
     border-radius: 50%;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    top: 2px;
-    left: 2px;
-    transition: all 0.3s;
-  }
+    background: var(--paper-strong);
+    box-shadow: var(--button-shadow);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
 
-  #passwordToggle:checked + .toggle .slider {
-    left: 32px;
-  }
+body.night-mode .toggle {
+    background: rgba(255, 255, 255, 0.08);
+}
 
-  .checkbox {
-    display: none;
-  }
+#passwordToggle:checked + .toggle {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
 
+#passwordToggle:checked + .toggle::before {
+    transform: translateX(1.45rem);
+    background: var(--accent);
+}
 
-  @keyframes fadeInOut {
-    0%, 100% {
-      opacity: 0;
+.blurred,
+.blurred::selection {
+    color: transparent;
+    text-shadow: 0 0 8px rgba(24, 22, 18, 0.55);
+}
+
+body.night-mode .blurred,
+body.night-mode .blurred::selection {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+}
+
+.blurred::placeholder {
+    color: rgba(0, 0, 0, 0.2);
+    text-shadow: none;
+}
+
+body.night-mode .blurred::placeholder {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 760px) {
+    .panel-toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
-    50% {
-      opacity: 1;
+
+    .privacy-control {
+        justify-content: space-between;
     }
-  }
-  
+}

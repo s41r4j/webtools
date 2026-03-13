@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>[ Web Tools ]</title>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Tools</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
 
-        <!-- Linking/Importing CSS and JS files -->
-        <link rel="stylesheet" href="assets/css/styles.css">
-        <script src="assets/js/script.js"></script>
-
-    </head>
-    <body>
-        
-      <h1 class="heading"><span class="initials">W</span>eb<span class="initials"> T</span>ools</h1>
-
-      <div class="container">
-        <div class="card">
-            <a href="tools/browser_fingerprinting.html">
-                <img src="assets/images/browser_fingerprinting.png" alt="Web Browser Fingerprinting">
-                <h3>Browser Fingerprinting</h3>
+<body>
+    <div class="app-shell">
+        <aside class="site-rail">
+            <a href="/" onclick="route(event)" class="brand-mark">
+                <p class="brand-kicker">Field Notes Edition</p>
+                <h1 class="brand-title">Web Tools</h1>
+                <p class="brand-copy">Browser utilities, encoding worksheets, and link experiments arranged like a quiet paper desk.</p>
             </a>
-        </div>
 
-        <div class="card">
-            <a href="tools/cryptography.html">
-                <img src="assets/images/cryptography.png" alt="Cryptography">
-                <h3>Cryptography</h3>
-            </a>
-        </div>
+            <nav class="site-nav" aria-label="Primary">
+                <a href="/" onclick="route(event)" data-route="/" data-index="00">Desk Index</a>
+                <a href="/browser-fingerprinting" onclick="route(event)" data-route="/browser-fingerprinting" data-index="01">Fingerprinting</a>
+                <a href="/cryptography" onclick="route(event)" data-route="/cryptography" data-index="02">Cryptography</a>
+                <a href="/url-crafts" onclick="route(event)" data-route="/url-crafts" data-index="03">URL Crafts</a>
+                <a href="/open-all-urls" onclick="route(event)" data-route="/open-all-urls" data-index="04">Open All URLs</a>
+                <a href="/only-yes" onclick="route(event)" data-route="/only-yes" data-index="05">Only Yes</a>
+            </nav>
 
-        <div class="card">
-            <a href="urlcrafts.html">
-                <img src="assets/images/urlcrafts.png" alt="URL Crafts">
-                <h3>URL Crafts</h3>
-            </a>
-        </div>
-      </div>
+            <div class="rail-actions">
+                <button id="btn-back" class="rail-btn rail-btn--ghost" onclick="goBack()" hidden>Back</button>
+                <button id="btn-theme" class="rail-btn rail-btn--accent" onclick="toggleTheme()">Night Ink</button>
+            </div>
 
-    </body>
+            <section class="route-note" aria-live="polite">
+                <p id="route-kicker" class="route-kicker">Desk Index</p>
+                <p id="route-summary" class="route-summary">A paper-organized collection of utilities that run directly in the browser.</p>
+            </section>
+        </aside>
+
+        <main class="page-stage">
+            <article class="page-sheet">
+                <header class="page-head">
+                    <p id="page-kicker" class="page-kicker">Desk Index</p>
+                    <h2 id="page-title" class="page-title">Web Tools</h2>
+                    <p id="page-description" class="page-description">A paper-organized collection of utilities that run directly in the browser.</p>
+                </header>
+
+                <section id="app" class="page-body">
+                    <!-- router.js injects the active page here -->
+                </section>
+            </article>
+        </main>
+    </div>
+
+    <script src="assets/js/router.js"></script>
+</body>
+
 </html>

@@ -1,0 +1,71 @@
+<section class="tool-layout tool-layout--split crypto-layout">
+    <form id="cryptoForm" class="paper-panel paper-form">
+        <p class="panel-kicker">Composition Sheet</p>
+        <h3 class="panel-title">Input and method</h3>
+        <p class="panel-copy">Choose a transform, type the source text, and provide a key only when the selected method actually needs one.</p>
+
+        <div class="field-stack">
+            <label for="cryptoOption">Method</label>
+            <select id="cryptoOption">
+                <option value="md5">MD5</option>
+                <option value="sha1">SHA-1</option>
+                <option value="sha256">SHA-256</option>
+                <option value="sha512">SHA-512</option>
+                <option value="zcrypt">Zcrypt</option>
+                <option value="rot">Custom ROT (default: 13)</option>
+                <option value="reverse">Reverse</option>
+                <option value="base64Encode">Base64 Encode</option>
+                <option value="base64Decode">Base64 Decode</option>
+                <option value="binaryEncode">Binary Encode</option>
+                <option value="binaryDecode">Binary Decode</option>
+                <option value="octalEncode">Octal Encode</option>
+                <option value="octalDecode">Octal Decode</option>
+                <option value="hexEncode">Hex Encode</option>
+                <option value="hexDecode">Hex Decode</option>
+                <option value="urlEncode">URL Encode</option>
+                <option value="urlDecode">URL Decode</option>
+                <option value="aesEncrypt">AES Encryption</option>
+                <option value="aesDecrypt">AES Decryption</option>
+            </select>
+
+            <p id="cryptoHelper" class="small-print">Hashes and format conversions update as you type.</p>
+
+            <label for="inputText">Input text</label>
+            <div class="input-container">
+                <textarea id="inputText" placeholder="Enter the source text here..."></textarea>
+            </div>
+
+            <label id="saltLabel" for="inputSalt">Salt / key</label>
+            <div class="input-container">
+                <textarea id="inputSalt" placeholder="Optional for most methods; required for keyed ciphers."></textarea>
+            </div>
+        </div>
+    </form>
+
+    <section class="paper-panel output-panel">
+        <p class="panel-kicker">Result Sheet</p>
+        <h3 class="panel-title">Output</h3>
+        <p class="panel-copy">The result is generated locally in the browser. Privacy mode blurs the input and key fields while you work.</p>
+
+        <label for="outputText">Output</label>
+        <textarea id="outputText" placeholder="Output will appear here..." readonly></textarea>
+
+        <div class="panel-toolbar">
+            <button type="button" id="copyButton" class="tool-button tool-button--primary">Copy Result</button>
+
+            <div class="privacy-control">
+                <span>Privacy mask</span>
+                <div class="toggle-container">
+                    <input type="checkbox" class="checkbox" id="passwordToggle">
+                    <label class="toggle" for="passwordToggle">
+                        <div class="slider"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <p id="modeHint" class="small-print">Nothing is uploaded; the worksheet runs entirely in your browser.</p>
+    </section>
+</section>
+
+<div id="popUpMessage" class="toast">Copied to clipboard.</div>

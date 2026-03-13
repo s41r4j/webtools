@@ -1,144 +1,120 @@
-/* General styles */
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 10px;
-  overflow-y: auto;
-  max-height: calc(100% - 160px); /* Adjusted max-height for buttons */
-  font-family: 'Courier New', Courier, monospace;
+.fingerprint-sheet {
+    display: grid;
+    gap: 18px;
 }
 
-.category {
-  margin-bottom: 20px;
-}
-
-.category h2 {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-  padding: 10px;
-  border-bottom: 2px solid #ddd;
-  background-color: #f9f9f9;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.heading {
-  text-align: center;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.initials {
-  font-weight: bold;
-  color: #ff0000;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  position: absolute;
-}
-
-
-/* Table styling */
 .table-container {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
+    width: 100%;
 }
 
 .table-wrapper {
-  width: 100%;
-  max-width: 800px;
-  margin-bottom: 30px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 26px;
+    border: 1px solid var(--rule);
+    background: rgba(255, 255, 255, 0.38);
+    box-shadow: var(--panel-shadow-soft);
 }
 
 .table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.table th,
-.table td {
-  padding: 12px 20px;
-  text-align: left;
-}
-
-.table th {
-  background-color: #333;
-  color: #fff;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .table td {
-  background-color: #f9f9f9;
-  color: #333;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink);
 }
 
-.table tr:nth-child(even) td {
-  background-color: #f2f2f2;
+.table td:first-child {
+    width: 32%;
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
-.category-row {
-  background-color: #666;
-  color: #fff;
-  font-weight: bold;
+.table tr:last-child td {
+    border-bottom: none;
 }
 
-.category-cell {
-  padding: 10px;
-  font-size: 18px;
-  text-transform: uppercase;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+.table tbody tr:hover td {
+    background: rgba(126, 76, 39, 0.04);
 }
 
-
-/* Button styling */
-.button-container {
-  text-align: center;
-  margin-top: 20px;
+.category-row td {
+    background: rgba(24, 22, 18, 0.06);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--rule-strong);
 }
 
-.button-container button {
-  margin-right: 10px;
+body.night-mode .category-row td {
+    background: rgba(255, 255, 255, 0.04);
 }
 
-.action-button {
-  margin: 0 10px;
-  padding: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+@media (max-width: 760px) {
+    .table,
+    .table tbody,
+    .table tr,
+    .table td {
+        display: block;
+        width: 100%;
+    }
+
+    .category-row td {
+        display: block;
+    }
+
+    .table td:first-child {
+        width: 100%;
+        padding-bottom: 6px;
+        border-bottom: none;
+    }
+
+    .table tr:not(.category-row) {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--rule);
+    }
+
+    .table tr:not(.category-row) td:last-child {
+        padding-top: 0;
+    }
 }
 
-.action-button:hover {
-  background-color: #0056b3;
-}
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
 
-/* media query for 'print' */
-@media print{ 
-  body, html, #page-container, .scrollable-page, .ps, .panel {
-      height: 100% !important;
-      width: 100% !important;
-      position: absolute;
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-  }
+    .site-rail,
+    .page-head,
+    .tool-layout,
+    .inline-actions {
+        display: none !important;
+    }
 
-  .button-container {
-    display: none;
-  }
+    .page-sheet,
+    .table-wrapper {
+        box-shadow: none !important;
+        background: #ffffff !important;
+        border: 1px solid #c9c9c9 !important;
+    }
+
+    .table td {
+        color: #000000 !important;
+        border-bottom: 1px solid #d8d8d8 !important;
+    }
+
+    .category-row td {
+        background: #f1f1f1 !important;
+    }
 }

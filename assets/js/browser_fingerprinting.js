@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize Fingerprinting when script is loaded by the router
+(function initFingerprinting() {
   var fingerprintingDetails = [
     {
       category: 'Browser Information',
@@ -40,57 +41,64 @@ document.addEventListener('DOMContentLoaded', function() {
       ]
     },
   ];
-  
+
   var containerElement = document.getElementById('fingerprintingContainer');
-  
+  if (!containerElement) return; // Guard clause in case script runs out of order
+
   var tableElement = document.createElement('table');
   tableElement.classList.add('table');
-  
+
   fingerprintingDetails.forEach(function (category) {
     var categoryRow = document.createElement('tr');
     categoryRow.classList.add('category-row');
-  
+
     var categoryCell = document.createElement('td');
     categoryCell.classList.add('category-cell');
     categoryCell.textContent = category.category;
     categoryCell.colSpan = 2;
     categoryRow.appendChild(categoryCell);
-  
+
     tableElement.appendChild(categoryRow);
-  
+
     category.items.forEach(function (detail) {
       var row = document.createElement('tr');
-  
+
       var labelCell = document.createElement('td');
       labelCell.textContent = detail.label;
       row.appendChild(labelCell);
-  
+
       var valueCell = document.createElement('td');
       valueCell.id = detail.id;
       row.appendChild(valueCell);
-  
+
       tableElement.appendChild(row);
     });
   });
-  
+
   var containerWrapper = document.createElement('div');
   containerWrapper.classList.add('table-container');
-  containerWrapper.appendChild(tableElement);
-  
+
+  // Create an inner wrapper for styling matching the CSS
+  var tableWrapperInner = document.createElement('div');
+  tableWrapperInner.classList.add('table-wrapper');
+  tableWrapperInner.appendChild(tableElement);
+
+  containerWrapper.appendChild(tableWrapperInner);
+
   containerElement.appendChild(containerWrapper);
-  
+
 
   // Get the user agent
   var userAgent = navigator.userAgent;
   var userAgentElement = document.getElementById('userAgent');
-  userAgentElement.textContent = userAgent;
+  if (userAgentElement) userAgentElement.textContent = userAgent;
 
   // Get the browser details
   var browserElement = document.getElementById('browser');
   var browserDetails = parseBrowser(userAgent);
-  if (browserDetails) {
+  if (browserDetails && browserElement) {
     browserElement.textContent = browserDetails;
-  } else {
+  } else if (browserElement) {
     browserElement.parentElement.style.display = 'none';
   }
 
@@ -107,9 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Get the browser engine details
   var browserEngineElement = document.getElementById('browserEngine');
   var browserEngineDetails = parseBrowserEngine(userAgent);
-  if (browserEngineDetails) {
+  if (browserEngineDetails && browserEngineElement) {
     browserEngineElement.textContent = browserEngineDetails;
-  } else {
+  } else if (browserEngineElement) {
     browserEngineElement.parentElement.style.display = 'none';
   }
 
@@ -163,14 +171,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to detect Tor using the Tor Project website
   function detectTor() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       fetch('https://check.torproject.org/', { mode: 'no-cors' })
-        .then(function(response) {
+        .then(function (response) {
           var headers = response.headers;
           var isTor = headers.has('Onion-Location');
           resolve(isTor);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error('Tor detection error:', error);
           reject();
         });
@@ -180,21 +188,20 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update the table with Tor detection result
   function updateTorDetectionResult(isTor) {
     var torDetectionElement = document.getElementById('torDetection');
-    torDetectionElement.textContent = isTor ? 'Detected' : 'Not Detected';
+    if (torDetectionElement) torDetectionElement.textContent = isTor ? 'Detected' : 'Not Detected';
   }
 
   // Usage example
+  var torStatusElement = document.getElementById('torDetection');
+  if (torStatusElement) torStatusElement.textContent = 'Checking...';
+
   detectTor()
-    .then(function(isTor) {
+    .then(function (isTor) {
       updateTorDetectionResult(isTor);
     })
-    .catch(function() {
+    .catch(function () {
       updateTorDetectionResult(false);
     });
-
-    
-
-
 
   // Function to check if cookies are enabled
   function areCookiesEnabled() {
@@ -224,101 +231,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to get the local IP address
   function getLocalIP() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
       if (!RTCPeerConnection) {
         reject();
       }
 
-      var rtcPeerConnection = new RTCPeerConnection({
-        iceServers: []
-      });
-      rtcPeerConnection.createDataChannel('');
+      try {
+        var rtcPeerConnection = new RTCPeerConnection({
+          iceServers: []
+        });
+        rtcPeerConnection.createDataChannel('');
 
-      rtcPeerConnection.onicecandidate = function(event) {
-        if (event && event.candidate && event.candidate.candidate) {
-          var localIP = event.candidate.candidate.split('\n')[0].split(' ')[4];
-          resolve(localIP);
-        } else {
+        rtcPeerConnection.onicecandidate = function (event) {
+          if (event && event.candidate && event.candidate.candidate) {
+            var localIP = event.candidate.candidate.split('\n')[0].split(' ')[4];
+            resolve(localIP);
+          } else {
+            reject();
+          }
+
+          rtcPeerConnection.close();
+        };
+
+        rtcPeerConnection.createOffer(function (offer) {
+          rtcPeerConnection.setLocalDescription(offer);
+        }, function () {
           reject();
-        }
-
-        rtcPeerConnection.close();
-      };
-
-      rtcPeerConnection.createOffer(function(offer) {
-        rtcPeerConnection.setLocalDescription(offer);
-      }, function() {
+        });
+      } catch (e) {
         reject();
-      });
+      }
     });
   }
 
-
-
-
-
-
-
-  // // Function to fetch the public IP using different techniques
-  // function fetchPublicIP() {
-  //   return new Promise(function(resolve, reject) {
-  //     // Technique 1: Use WebRTC to retrieve the IP addresses
-  //     var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-  //     var pc = new myPeerConnection({ iceServers: [] });
-  //     var noop = function() {};
-  //     pc.createDataChannel('');
-  //     pc.createOffer(pc.setLocalDescription.bind(pc), noop);
-
-  //     pc.onicecandidate = function(event) {
-  //       if (event && event.candidate && event.candidate.candidate) {
-  //         var ipRegex = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::\d+)?/;
-  //         var ipAddress = ipRegex.exec(event.candidate.candidate)[0];
-  //         pc.onicecandidate = noop;
-  //         pc.close();
-  //         resolve(ipAddress);
-  //       }
-  //     };
-
-  //     // Technique 2: Use DNS query to retrieve the public IP
-  //     var dnsRequest = new XMLHttpRequest();
-  //     dnsRequest.open('GET', '/', true);
-  //     dnsRequest.onload = function() {
-  //       var ipAddress = dnsRequest.getResponseHeader('X-Real-IP') || dnsRequest.getResponseHeader('X-Forwarded-For');
-  //       if (ipAddress) {
-  //         resolve(ipAddress);
-  //       } else {
-  //         reject(new Error('Failed to fetch public IP'));
-  //       }
-  //     };
-  //     dnsRequest.onerror = function() {
-  //       reject(new Error('Failed to fetch public IP'));
-  //     };
-  //     dnsRequest.send();
-  //   });
-  // }
-
-  // // Usage example
-  // fetchPublicIP()
-  //   .then(function(publicIP) {
-  //     var publicIPElement = document.getElementById('publicIP');
-  //     publicIPElement.textContent = publicIP;
-  //   })
-  //   .catch(function(error) {
-  //     console.error(error);
-  //   });
-
-
-  
-
-
-
-
-
-
   // Function to get the location
   function getLocation() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       // Implement your location detection logic here
       resolve('N/A');
     });
@@ -338,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function getSystemFonts() {
     var fonts = [];
     if (document.fonts) {
-      document.fonts.forEach(function(font) {
+      document.fonts.forEach(function (font) {
         fonts.push(font.family);
       });
     }
@@ -347,13 +296,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to detect if an ad blocker is used
   function detectAdBlocker() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var testAd = document.createElement('div');
       testAd.innerHTML = '&nbsp;';
       testAd.className = 'adsbox';
       document.body.appendChild(testAd);
 
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         if (testAd.offsetHeight === 0) {
           resolve(true); // Ad blocker detected
         } else {
@@ -366,176 +315,93 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Call the functions to get the fingerprinting details
   var deviceElement = document.getElementById('device');
-  deviceElement.textContent = getDevice();
+  if (deviceElement) deviceElement.textContent = getDevice();
 
   var operatingSystemElement = document.getElementById('operatingSystem');
-  operatingSystemElement.textContent = getOperatingSystem();
+  if (operatingSystemElement) operatingSystemElement.textContent = getOperatingSystem();
 
   var vpnDetectionElement = document.getElementById('vpnDetection');
-  vpnDetectionElement.textContent = detectVPN() ? 'Detected' : 'Not Detected';
+  if (vpnDetectionElement) vpnDetectionElement.textContent = detectVPN() ? 'Detected' : 'Not Detected';
 
   var proxyDetectionElement = document.getElementById('proxyDetection');
-  proxyDetectionElement.textContent = detectProxy() ? 'Detected' : 'Not Detected';
-
-  var torDetectionElement = document.getElementById('torDetection');
-  torDetectionElement.textContent = detectTor() ? 'Detected' : 'Not Detected';
+  if (proxyDetectionElement) proxyDetectionElement.textContent = detectProxy() ? 'Detected' : 'Not Detected';
 
   var cookiesEnabledElement = document.getElementById('cookiesEnabled');
-  cookiesEnabledElement.textContent = areCookiesEnabled() ? 'Enabled' : 'Disabled';
+  if (cookiesEnabledElement) cookiesEnabledElement.textContent = areCookiesEnabled() ? 'Enabled' : 'Disabled';
 
   var javascriptEnabledElement = document.getElementById('javascriptEnabled');
-  javascriptEnabledElement.textContent = isJavaScriptEnabled() ? 'Enabled' : 'Disabled';
+  if (javascriptEnabledElement) javascriptEnabledElement.textContent = isJavaScriptEnabled() ? 'Enabled' : 'Disabled';
 
   var localIPElement = document.getElementById('localIP');
-  getLocalIP().then(function(localIP) {
-    localIPElement.textContent = localIP || 'N/A';
-  }).catch(function() {
-    localIPElement.textContent = 'N/A';
+  getLocalIP().then(function (localIP) {
+    if (localIPElement) localIPElement.textContent = localIP || 'N/A';
+  }).catch(function () {
+    if (localIPElement) localIPElement.textContent = 'N/A';
   });
 
-
-
-
-
-
-
-
-  // var publicIPElement = document.getElementById('publicIP');
-  // getPublicIP().then(function(publicIP) {
-  //   publicIPElement.textContent = publicIP || 'N/A';
-  // }).catch(function() {
-  //   publicIPElement.textContent = 'N/A';
-  // });
-
-
-
-
-
-
-
   var locationElement = document.getElementById('location');
-  getLocation().then(function(location) {
-    locationElement.textContent = navigator.geolocation || 'N/A';
-  }).catch(function() {
-    locationElement.textContent = 'N/A';
+  getLocation().then(function (location) {
+    if (locationElement) locationElement.textContent = location || 'N/A';
+  }).catch(function () {
+    if (locationElement) locationElement.textContent = 'N/A';
   });
 
   var computerScreenElement = document.getElementById('computerScreen');
-  computerScreenElement.textContent = getScreenSize() + ' pixels';
+  if (computerScreenElement) computerScreenElement.textContent = getScreenSize() + ' pixels';
 
   var windowSizeElement = document.getElementById('windowSize');
-  windowSizeElement.textContent = getWindowSize() + ' pixels';
+  if (windowSizeElement) windowSizeElement.textContent = getWindowSize() + ' pixels';
 
+  function updateNetworkHints() {
+    var downloadSpeedElement = document.getElementById('downloadSpeed');
+    var uploadSpeedElement = document.getElementById('uploadSpeed');
+    var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-
-
-
-
-
-
-
-  // Function to get the internet speed
-  function checkInternetConnection(callback) {
-    var xhr = new XMLHttpRequest();
-    var startTime = new Date().getTime();
-    
-    xhr.open('GET', window.location.href, true); // Make a request to the current page URL
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        var endTime = new Date().getTime();
-        var elapsedTime = endTime - startTime;
-
-        if (xhr.status >= 200 && xhr.status < 300) {
-          // Request succeeded, consider it as an active internet connection
-          callback(true, elapsedTime);
-        } else {
-          // Request failed, no active internet connection
-          callback(false, elapsedTime);
-        }
+    if (downloadSpeedElement) {
+      if (connection && typeof connection.downlink === 'number') {
+        downloadSpeedElement.textContent = connection.downlink + ' Mbps (reported)';
+      } else {
+        downloadSpeedElement.textContent = 'Unavailable';
       }
-    };
+    }
 
-    xhr.send();
-  }
-
-  // Function to calculate download speed based on elapsed time
-  function calculateDownloadSpeed(elapsedTime) {
-    // Assuming a file size of 100 MB (100 Megabits)
-    var fileSizeInMegabits = 100;
-    var elapsedTimeInSeconds = elapsedTime / 1000; // Convert elapsed time to seconds
-
-    var downloadSpeed = fileSizeInMegabits / elapsedTimeInSeconds;
-    return downloadSpeed.toFixed(2); // Return the download speed rounded to 2 decimal places
-  }
-
-  // Function to calculate upload speed based on elapsed time
-  function calculateUploadSpeed(elapsedTime) {
-    // Assuming a file size of 50 MB (50 Megabits)
-    var fileSizeInMegabits = 100;
-    var elapsedTimeInSeconds = elapsedTime / 1000; // Convert elapsed time to seconds
-
-    var uploadSpeed = fileSizeInMegabits / elapsedTimeInSeconds;
-    return uploadSpeed.toFixed(2); // Return the upload speed rounded to 2 decimal places
-  }
-
-  function updateSpeeds() {
-    var startTime = new Date().getTime(); // Get the current time in milliseconds
-
-    // Simulate file download and upload
-    setTimeout(function() {
-      var endTime = new Date().getTime(); // Get the current time after the download and upload complete
-      var elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
-
-      var downloadSpeed = calculateDownloadSpeed(elapsedTime); // Calculate the download speed
-      var uploadSpeed = calculateUploadSpeed(elapsedTime); // Calculate the upload speed
-
-      var downloadSpeedElement = document.getElementById('downloadSpeed'); // Get the element to update the download speed
-      var uploadSpeedElement = document.getElementById('uploadSpeed'); // Get the element to update the upload speed
-
-      if (downloadSpeedElement) {
-        downloadSpeedElement.textContent = downloadSpeed + ' Mbps'; // Update the element with the download speed
+    if (uploadSpeedElement) {
+      if (connection && connection.effectiveType) {
+        uploadSpeedElement.textContent = connection.effectiveType + ' network';
+      } else {
+        uploadSpeedElement.textContent = 'Not exposed';
       }
-
-      if (uploadSpeedElement) {
-        uploadSpeedElement.textContent = uploadSpeed + ' Mbps'; // Update the element with the upload speed
-      }
-    }, 5000); // Wait for 5 seconds before calculating the speeds again
+    }
   }
 
-  // Call the updateSpeeds function initially to start the process
-  updateSpeeds();
+  updateNetworkHints();
 
-  // Call the updateSpeeds function every 5 seconds to keep updating the speeds
-  setInterval(updateSpeeds, 1000);
+  var networkConnection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (networkConnection && networkConnection.addEventListener) {
+    networkConnection.addEventListener('change', updateNetworkHints);
+  }
 
-
-
-
-
-
-
-  
   // Function to get the addons
   var addonsElement = document.getElementById('addons');
-  getAddons().then(function(addons) {
-    addonsElement.textContent = addons.length > 0 ? addons.join(', ') : 'N/A';
-  }).catch(function() {
-    addonsElement.textContent = 'N/A';
+  getAddons().then(function (addons) {
+    if (addonsElement) addonsElement.textContent = addons.length > 0 ? addons.join(', ') : 'N/A';
+  }).catch(function () {
+    if (addonsElement) addonsElement.textContent = 'N/A';
   });
 
   // Function to detect if an ad blocker is used
   var adBlockerUsedElement = document.getElementById('adBlockerUsed');
-  detectAdBlocker().then(function(adBlockerUsed) {
-    adBlockerUsedElement.textContent = adBlockerUsed ? 'Used' : 'Not Used';
-  }).catch(function() {
-    adBlockerUsedElement.textContent = 'N/A';
+  detectAdBlocker().then(function (adBlockerUsed) {
+    if (adBlockerUsedElement) adBlockerUsedElement.textContent = adBlockerUsed ? 'Used' : 'Not Used';
+  }).catch(function () {
+    if (adBlockerUsedElement) adBlockerUsedElement.textContent = 'N/A';
   });
 
   var timeZoneElement = document.getElementById('timeZone');
-  timeZoneElement.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (timeZoneElement) timeZoneElement.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   var systemFontsElement = document.getElementById('systemFonts');
-  systemFontsElement.textContent = getSystemFonts();
+  if (systemFontsElement) systemFontsElement.textContent = getSystemFonts();
 
   // Get the hardware-related information
   function getHardwareInfo() {
@@ -550,17 +416,17 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update the hardware-related information in the table
   var hardwareInfo = getHardwareInfo();
   var cpuCoresElement = document.getElementById('cpuCores');
-  cpuCoresElement.textContent = hardwareInfo.cpuCores;
+  if (cpuCoresElement) cpuCoresElement.textContent = hardwareInfo.cpuCores;
   var memoryElement = document.getElementById('memory');
-  memoryElement.textContent = hardwareInfo.memory;
+  if (memoryElement) memoryElement.textContent = hardwareInfo.memory;
   var gpuElement = document.getElementById('gpu');
-  gpuElement.textContent = hardwareInfo.gpu;
+  if (gpuElement) gpuElement.textContent = hardwareInfo.gpu;
 
   // Function to get the addons
   function getAddons() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       if (navigator && navigator.plugins && navigator.plugins.length > 0) {
-        var addons = Array.from(navigator.plugins).map(function(plugin) {
+        var addons = Array.from(navigator.plugins).map(function (plugin) {
           return plugin.name;
         });
         resolve(addons);
@@ -572,18 +438,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add print button functionality
   var printButton = document.getElementById('printButton');
-  printButton.addEventListener('click', function() {
-    // Add a class to the body to apply the print styles
-    document.body.classList.add('print-mode');
+  if (printButton) {
+    printButton.addEventListener('click', function () {
+      // Add a class to the body to apply the print styles
+      document.body.classList.add('print-mode');
 
-     // Wait for a short delay to allow the styles to be applied
-    setTimeout(function() {
+      // Wait for a short delay to allow the styles to be applied
+      setTimeout(function () {
         // Use the browser's print functionality to save the rendered content as a PDF
         window.print();
 
         // Remove the print class after printing
         document.body.classList.remove('print-mode');
-      }, 100); 
+      }, 100);
     });
+  }
 
-});
+})();
