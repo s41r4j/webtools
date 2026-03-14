@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Attachment Style Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #1a1614;
+    --cream: #f5f0e8;
+    --warm: #e8ddd0;
+    --amber: #c9884a;
+    --amber-light: #e8a96a;
+    --sage: #7a9e8e;
+    --rose: #c47a7a;
+    --slate: #6b7b8d;
+    --paper: #faf7f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(201,136,74,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(122,158,142,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 0;
+  }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 28px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--amber-light);
+  }
+
+  .intro-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.65);
+    max-width: 520px;
+    margin-bottom: 40px;
+  }
+
+  .science-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.1);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 48px;
+  }
+
+  .science-note .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .science-note p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.55);
+  }
+
+  .science-note strong { color: rgba(245,240,232,0.8); }
+
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 16px 36px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .btn-start:hover { background: var(--amber-light); transform: translateY(-1px); }
+  .btn-start .arrow { transition: transform 0.2s; }
+  .btn-start:hover .arrow { transform: translateX(4px); }
+
+  .meta-row {
+    margin-top: 32px;
+    display: flex;
+    gap: 32px;
+    font-size: 12px;
+    color: rgba(245,240,232,0.35);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── PROGRESS ── */
+  #quiz { display: none; padding: 48px 0 80px; }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .progress-count {
+    font-size: 12px;
+    color: rgba(245,240,232,0.4);
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: rgba(245,240,232,0.1);
+    border-radius: 2px;
+    margin-bottom: 56px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber), var(--amber-light));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── QUESTION ── */
+  .question-block {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.3);
+    margin-bottom: 16px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 3.5vw, 1.55rem);
+    line-height: 1.45;
+    color: var(--cream);
+    margin-bottom: 40px;
+    min-height: 80px;
+  }
+
+  /* Likert scale */
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: rgba(245,240,232,0.35);
+    letter-spacing: 0.3px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 48px;
+  }
+
+  .option-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.12);
+    border-radius: 4px;
+    padding: 14px 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: rgba(245,240,232,0.5);
+    font-size: 12px;
+  }
+
+  .option-btn .circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(245,240,232,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+
+  .option-btn:hover {
+    border-color: rgba(201,136,74,0.5);
+    color: var(--amber-light);
+    transform: translateY(-2px);
+  }
+
+  .option-btn:hover .circle {
+    border-color: var(--amber);
+    background: rgba(201,136,74,0.1);
+  }
+
+  .option-btn.selected {
+    border-color: var(--amber);
+    background: rgba(201,136,74,0.08);
+    color: var(--amber-light);
+  }
+
+  .option-btn.selected .circle {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-nav {
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.18);
+    color: rgba(245,240,232,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    border-color: var(--amber);
+    color: var(--amber-light);
+  }
+
+  .btn-nav:disabled { opacity: 0.25; cursor: default; }
+
+  .btn-next {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    background: var(--amber-light);
+    border-color: var(--amber-light);
+    color: var(--ink);
+  }
+
+  /* ── RESULTS ── */
+  #results { display: none; padding: 60px 0 100px; }
+
+  .result-label { margin-bottom: 16px; }
+
+  .result-style {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .result-subtitle {
+    font-size: 13px;
+    color: rgba(245,240,232,0.45);
+    letter-spacing: 0.3px;
+    margin-bottom: 36px;
+  }
+
+  .score-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .score-card {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.1);
+    border-radius: 6px;
+    padding: 20px;
+  }
+
+  .score-card-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    margin-bottom: 12px;
+  }
+
+  .score-bar-wrap {
+    height: 6px;
+    background: rgba(245,240,232,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.3s;
+  }
+
+  .score-bar-fill.anxiety { background: linear-gradient(90deg, var(--rose), #e89090); }
+  .score-bar-fill.avoidance { background: linear-gradient(90deg, var(--slate), #8fa3b8); }
+
+  .score-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--cream);
+  }
+
+  .score-value span { font-size: 13px; color: rgba(245,240,232,0.4); }
+
+  /* Style quadrant visual */
+  .quadrant-wrap {
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .quadrant {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .q-cell {
+    background: rgba(245,240,232,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(245,240,232,0.25);
+    letter-spacing: 0.5px;
+    text-align: center;
+    padding: 8px;
+    transition: background 0.4s;
+    text-transform: uppercase;
+  }
+
+  .q-cell.active {
+    background: rgba(201,136,74,0.15);
+    color: var(--amber-light);
+    font-weight: 500;
+    border: 1px solid rgba(201,136,74,0.3);
+  }
+
+  .quadrant-axes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Axis labels */
+  .axis-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.3);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Description block */
+  .desc-block {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.1);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    padding: 28px 28px;
+    margin-bottom: 28px;
+  }
+
+  .desc-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    color: var(--cream);
+  }
+
+  .desc-block p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.65);
+    margin-bottom: 12px;
+  }
+
+  .desc-block p:last-child { margin-bottom: 0; }
+
+  .trait-list {
+    list-style: none;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .trait-list li {
+    font-size: 13px;
+    color: rgba(245,240,232,0.6);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .trait-list li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--amber);
+  }
+
+  .all-styles {
+    margin-top: 48px;
+  }
+
+  .all-styles h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .style-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .style-mini {
+    background: rgba(245,240,232,0.03);
+    border: 1px solid rgba(245,240,232,0.08);
+    border-radius: 4px;
+    padding: 16px;
+  }
+
+  .style-mini.highlighted {
+    border-color: rgba(201,136,74,0.35);
+    background: rgba(201,136,74,0.06);
+  }
+
+  .style-mini-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+
+  .style-mini.highlighted .style-mini-name { color: var(--amber-light); }
+
+  .style-mini p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.4);
+  }
+
+  .btn-retake {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 48px;
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.18);
+    color: rgba(245,240,232,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 2px;
+  }
+
+  .btn-retake:hover {
+    border-color: var(--amber);
+    color: var(--amber-light);
+  }
+
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: repeat(7,1fr); gap: 4px; }
+    .option-btn { padding: 10px 2px 8px; }
+    .option-btn .circle { width: 22px; height: 22px; font-size: 11px; }
+    .score-cards { grid-template-columns: 1fr; }
+    .style-grid { grid-template-columns: 1fr; }
+    .option-btn font-size { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ INTRO ══ -->
+<div id="intro">
+  <div class="container">
+    <div class="label">Psychological Assessment</div>
+    <h1>What is your<br/><em>attachment style?</em></h1>
+    <p class="intro-text">
+      Discover how you connect, love, and relate — rooted in decades of attachment research by Bowlby, Ainsworth, and Brennan.
+    </p>
+    <div class="science-note">
+      <span class="icon">⚗️</span>
+      <p>
+        <strong>Evidence-based.</strong> This assessment is modeled on the 
+        <strong>Experiences in Close Relationships (ECR-R)</strong> scale — the gold standard in adult attachment research. It measures two core dimensions: <strong>attachment anxiety</strong> and <strong>attachment avoidance</strong>, which together determine your style.
+      </p>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">
+      Begin Assessment <span class="arrow">→</span>
+    </button>
+    <div class="meta-row">
+      <span>📋 18 questions</span>
+      <span>⏱ ~4 minutes</span>
+      <span>🔒 Fully private</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div id="quiz">
+  <div class="container">
+    <div class="progress-header">
+      <span class="progress-label">Progress</span>
+      <span class="progress-count" id="prog-count">1 / 18</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:5%"></div></div>
+
+    <div class="question-block" id="q-block">
+      <div class="q-number" id="q-num">Question 01</div>
+      <div class="q-text" id="q-text"></div>
+
+      <div class="scale-labels">
+        <span>Strongly Disagree</span>
+        <span>Strongly Agree</span>
+      </div>
+      <div class="options-grid" id="options-grid"></div>
+
+      <div class="nav-row">
+        <button class="btn-nav" id="btn-back" onclick="prevQ()" disabled>← Back</button>
+        <button class="btn-nav btn-next" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="results">
+  <div class="container">
+    <div class="label result-label">Your Attachment Profile</div>
+    <div class="result-style" id="res-style"></div>
+    <div class="result-subtitle" id="res-subtitle"></div>
+
+    <div class="score-cards">
+      <div class="score-card">
+        <div class="score-card-label">Attachment Anxiety</div>
+        <div class="score-bar-wrap"><div class="score-bar-fill anxiety" id="bar-anxiety" style="width:0%"></div></div>
+        <div class="score-value" id="val-anxiety">–<span> / 7</span></div>
+      </div>
+      <div class="score-card">
+        <div class="score-card-label">Attachment Avoidance</div>
+        <div class="score-bar-wrap"><div class="score-bar-fill avoidance" id="bar-avoidance" style="width:0%"></div></div>
+        <div class="score-value" id="val-avoidance">–<span> / 7</span></div>
+      </div>
+    </div>
+
+    <div class="quadrant-wrap">
+      <div class="quadrant" id="quadrant">
+        <div class="q-cell" id="qc-disorganized">Fearful<br/>Avoidant</div>
+        <div class="q-cell" id="qc-anxious">Anxious<br/>Preoccupied</div>
+        <div class="q-cell" id="qc-avoidant">Dismissive<br/>Avoidant</div>
+        <div class="q-cell" id="qc-secure">Secure</div>
+      </div>
+      <div class="axis-label">← Low Avoidance · High Avoidance →</div>
+    </div>
+
+    <div class="desc-block" id="desc-block"></div>
+
+    <div class="all-styles">
+      <h3>All four styles at a glance</h3>
+      <div class="style-grid" id="style-grid"></div>
+    </div>
+
+    <button class="btn-retake" onclick="retake()">↺ Retake Assessment</button>
+  </div>
+</div>
+
+<script>
+// ── QUESTIONS ──────────────────────────────────────────────
+// Based on ECR-R scale dimensions
+// dim: 'A' = anxiety, 'V' = avoidance, reverse: true/false
+
+const questions = [
+  // AVOIDANCE
+  { text: "I prefer not to share my feelings with close partners.", dim: 'V', reverse: false },
+  { text: "I find it difficult to allow myself to depend on others.", dim: 'V', reverse: false },
+  { text: "I am comfortable sharing my private thoughts and feelings with my partner.", dim: 'V', reverse: true },
+  { text: "I find it difficult to trust partners completely.", dim: 'V', reverse: false },
+  { text: "I don't feel comfortable opening up to others.", dim: 'V', reverse: false },
+  { text: "I prefer not to be too close to my partners.", dim: 'V', reverse: false },
+  { text: "I feel comfortable depending on others.", dim: 'V', reverse: true },
+  { text: "It helps to turn to people when I'm feeling down.", dim: 'V', reverse: true },
+  { text: "I tell my partner just about everything that's on my mind.", dim: 'V', reverse: true },
+
+  // ANXIETY
+  { text: "I worry that I will be abandoned by those close to me.", dim: 'A', reverse: false },
+  { text: "I worry about being alone.", dim: 'A', reverse: false },
+  { text: "I often worry that my partner doesn't really love me.", dim: 'A', reverse: false },
+  { text: "My desire to be close sometimes scares people away.", dim: 'A', reverse: false },
+  { text: "I need frequent reassurance that I am loved.", dim: 'A', reverse: false },
+  { text: "I get frustrated when my partner is not around as much as I would like.", dim: 'A', reverse: false },
+  { text: "I rarely worry about being abandoned.", dim: 'A', reverse: true },
+  { text: "I do not often worry about my relationships.", dim: 'A', reverse: true },
+  { text: "When I'm not in a relationship I feel anxious and incomplete.", dim: 'A', reverse: false },
+];
+
+const styleData = {
+  secure: {
+    name: "Secure",
+    color: "#7a9e8e",
+    subtitle: "Low Anxiety · Low Avoidance",
+    desc: `You feel comfortable with closeness and can depend on others without excessive worry. You trust that relationships can be stable and fulfilling, and you're able to communicate your needs openly.`,
+    traits: [
+      "Comfortable with intimacy and independence in balance",
+      "Able to trust partners and express vulnerability",
+      "Handles conflict calmly and constructively",
+      "Doesn't fear abandonment excessively",
+      "Often helps partners feel safe and regulated",
+    ],
+    growth: "Maintain awareness of your partner's attachment needs — your security is a genuine gift in any relationship.",
+  },
+  anxious: {
+    name: "Anxious / Preoccupied",
+    color: "#c47a7a",
+    subtitle: "High Anxiety · Low Avoidance",
+    desc: `You crave deep closeness but carry a persistent fear of abandonment. You are highly attuned to relationship dynamics and can become preoccupied when you feel disconnected or unsure of where you stand.`,
+    traits: [
+      "Deeply loving and emotionally invested",
+      "Seeks frequent reassurance and closeness",
+      "Can overthink messages, tone, or behavior",
+      "Fears being 'too much' or being left",
+      "Very sensitive to shifts in partner's mood or attention",
+    ],
+    growth: "Building self-soothing skills and internal security can transform how you experience relationships.",
+  },
+  avoidant: {
+    name: "Dismissive / Avoidant",
+    color: "#6b7b8d",
+    subtitle: "Low Anxiety · High Avoidance",
+    desc: `You value independence and self-sufficiency, often to the point of emotional distance. You may feel uncomfortable with too much intimacy or dependency, and tend to suppress or minimize your attachment needs.`,
+    traits: [
+      "Highly self-reliant and values personal space",
+      "Tends to withdraw when partners get too close",
+      "Suppresses emotional needs as a coping strategy",
+      "May feel 'smothered' by emotionally expressive partners",
+      "Keeps a sense of internal calm by staying detached",
+    ],
+    growth: "Slowly allowing yourself to need others — even in small ways — is the path toward deeper connection.",
+  },
+  disorganized: {
+    name: "Fearful / Disorganized",
+    color: "#c9884a",
+    subtitle: "High Anxiety · High Avoidance",
+    desc: `You deeply want closeness but also fear it. This often stems from early experiences where caregivers were both a source of comfort and fear. Relationships can feel thrilling but also overwhelming and unsafe.`,
+    traits: [
+      "Craves intimacy but pulls away when it arrives",
+      "Relationships can feel chaotic or unpredictable",
+      "May experience strong emotional highs and lows",
+      "Can oscillate between clinging and pushing away",
+      "Often linked to unresolved early relational trauma",
+    ],
+    growth: "Trauma-informed therapy (such as EMDR or attachment-based therapy) can be deeply healing for this style.",
+  },
+};
+
+// ── STATE ──────────────────────────────────────────────────
+let answers = new Array(questions.length).fill(null);
+let current = 0;
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ(0);
+}
+
+function renderQ(idx) {
+  current = idx;
+  const q = questions[idx];
+  const total = questions.length;
+
+  document.getElementById('q-num').textContent = `Question ${String(idx+1).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog-count').textContent = `${idx+1} / ${total}`;
+  document.getElementById('prog-fill').style.width = `${((idx+1)/total)*100}%`;
+
+  // Options
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  for (let v = 1; v <= 7; v++) {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (answers[idx] === v ? ' selected' : '');
+    btn.innerHTML = `<div class="circle">${v}</div>`;
+    btn.onclick = () => selectAnswer(v);
+    grid.appendChild(btn);
+  }
+
+  document.getElementById('btn-back').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = answers[idx] === null;
+  document.getElementById('btn-next').textContent = idx === total-1 ? 'See Results →' : 'Next →';
+
+  // Re-animate
+  const block = document.getElementById('q-block');
+  block.style.animation = 'none';
+  void block.offsetWidth;
+  block.style.animation = 'fadeUp 0.4s ease both';
+}
+
+function selectAnswer(val) {
+  answers[current] = val;
+  document.querySelectorAll('.option-btn').forEach((b, i) => {
+    b.classList.toggle('selected', i+1 === val);
+  });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current === questions.length - 1) {
+    showResults();
+  } else {
+    renderQ(current + 1);
+  }
+}
+
+function prevQ() {
+  if (current > 0) renderQ(current - 1);
+}
+
+// ── SCORING ──────────────────────────────────────────────────
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  let anxietySum = 0, anxietyN = 0;
+  let avoidanceSum = 0, avoidanceN = 0;
+
+  questions.forEach((q, i) => {
+    let val = answers[i] || 4;
+    if (q.reverse) val = 8 - val;
+    if (q.dim === 'A') { anxietySum += val; anxietyN++; }
+    else { avoidanceSum += val; avoidanceN++; }
+  });
+
+  const anxScore  = +(anxietySum  / anxietyN).toFixed(2);
+  const avoiScore = +(avoidanceSum / avoidanceN).toFixed(2);
+  const mid = 3.5;
+
+  const highAnx  = anxScore  > mid;
+  const highAvoi = avoiScore > mid;
+
+  let styleKey;
+  if (!highAnx && !highAvoi) styleKey = 'secure';
+  else if (highAnx && !highAvoi) styleKey = 'anxious';
+  else if (!highAnx && highAvoi) styleKey = 'avoidant';
+  else styleKey = 'disorganized';
+
+  const s = styleData[styleKey];
+
+  // Fill header
+  document.getElementById('res-style').textContent = s.name;
+  document.getElementById('res-style').style.color = s.color;
+  document.getElementById('res-subtitle').textContent = s.subtitle;
+
+  // Score bars (setTimeout for animation)
+  setTimeout(() => {
+    document.getElementById('bar-anxiety').style.width  = `${((anxScore-1)/6)*100}%`;
+    document.getElementById('bar-avoidance').style.width = `${((avoiScore-1)/6)*100}%`;
+  }, 100);
+
+  document.getElementById('val-anxiety').innerHTML  = `${anxScore}<span> / 7</span>`;
+  document.getElementById('val-avoidance').innerHTML = `${avoiScore}<span> / 7</span>`;
+
+  // Quadrant
+  const map = { secure:'qc-secure', anxious:'qc-anxious', avoidant:'qc-avoidant', disorganized:'qc-disorganized' };
+  document.getElementById(map[styleKey]).classList.add('active');
+
+  // Description
+  const db = document.getElementById('desc-block');
+  db.style.borderLeftColor = s.color;
+  db.innerHTML = `
+    <h3>About Your Style</h3>
+    <p>${s.desc}</p>
+    <ul class="trait-list">
+      ${s.traits.map(t => `<li>${t}</li>`).join('')}
+    </ul>
+    <p style="margin-top:18px;font-size:13px;color:rgba(245,240,232,0.45);"><strong style="color:rgba(245,240,232,0.65);">Path forward:</strong> ${s.growth}</p>
+  `;
+
+  // All styles mini grid
+  const sg = document.getElementById('style-grid');
+  sg.innerHTML = Object.entries(styleData).map(([key, d]) => `
+    <div class="style-mini ${key === styleKey ? 'highlighted' : ''}">
+      <div class="style-mini-name" style="color:${key===styleKey?d.color:''}">${d.name}</div>
+      <p>${d.subtitle}</p>
+    </div>
+  `).join('');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retake() {
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('results').style.display = 'none';
+  // Reset quadrant
+  ['qc-secure','qc-anxious','qc-avoidant','qc-disorganized'].forEach(id =>
+    document.getElementById(id).classList.remove('active')
+  );
+  document.getElementById('bar-anxiety').style.width = '0%';
+  document.getElementById('bar-avoidance').style.width = '0%';
+  document.getElementById('intro').style.display = 'flex';
+}
+</script>
+</body>
+</html>

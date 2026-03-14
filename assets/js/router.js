@@ -31,14 +31,12 @@ const routes = {
         ],
         css: "assets/css/cryptography.css"
     },
-    "/open-all-urls": {
-        template: "pages/openallurls.html",
-        title: "Open All URLs",
-        kicker: "Link Ledger",
-        description: "Collect a batch of links, mark exceptions, and generate a shareable launch URL from the current list.",
-        summary: "A paper ledger for building and sharing batches of URLs.",
-        script: "assets/js/openallurls.js",
-        css: "assets/css/openallurls.css"
+    "/psychology": {
+        template: "pages/psychology.html",
+        title: "Psychology",
+        kicker: "Diagnostics",
+        description: "A secure cabinet of psychological tests securely evaluated on your local device.",
+        summary: "Explore personality models and relationship dynamics without leaving a paper trail."
     },
     "/only-yes": {
         template: "pages/onlyyes.html",

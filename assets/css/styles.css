@@ -430,6 +430,11 @@ body.night-mode .tool-button {
     gap: 12px;
 }
 
+/* Prevent Home Page Title Wrapping */
+.landing-intro .panel-title {
+    max-width: none !important;
+}
+
 .landing-meta div,
 .note-grid div {
     padding: 14px 16px;
