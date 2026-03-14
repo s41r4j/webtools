@@ -8,11 +8,11 @@
 }
 
 #inputText {
-    min-height: 16rem;
+    min-height: 8rem;
 }
 
 #inputSalt {
-    min-height: 8rem;
+    min-height: 4rem;
 }
 
 #inputSalt:disabled {
@@ -26,7 +26,7 @@ body.night-mode #inputSalt:disabled {
 }
 
 #outputText {
-    min-height: 22rem;
+    min-height: 12rem;
     background: rgba(24, 22, 18, 0.04);
 }
 

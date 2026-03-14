@@ -454,4 +454,38 @@
     });
   }
 
+  // Add JSON download functionality
+  var downloadJsonButton = document.getElementById('downloadJsonButton');
+  if (downloadJsonButton) {
+    downloadJsonButton.addEventListener('click', function () {
+      var data = {};
+      var rows = tableElement.querySelectorAll('tr:not(.category-row)');
+      
+      rows.forEach(function (row) {
+        var cells = row.querySelectorAll('td');
+        if (cells.length === 2) {
+          var key = cells[0].textContent.trim();
+          var value = cells[1].textContent.trim();
+          data[key] = value;
+        }
+      });
+
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      
+      var a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'webtools_fingerprint.json';
+      
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(function () {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    });
+  }
+
 })();

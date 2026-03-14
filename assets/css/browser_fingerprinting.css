@@ -117,4 +117,21 @@ body.night-mode .category-row td {
     .category-row td {
         background: #f1f1f1 !important;
     }
+
+    body::before {
+        content: "s41r4j & Web Tools — Browser Fingerprint Report";
+        display: block !important;
+        position: static !important;
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #000;
+        text-align: center;
+        background: none !important;
+        opacity: 1 !important;
+        z-index: 1 !important;
+    }
 }

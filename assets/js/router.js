@@ -31,13 +31,6 @@ const routes = {
         ],
         css: "assets/css/cryptography.css"
     },
-    "/url-crafts": {
-        template: "pages/urlcrafts.html",
-        title: "URL Crafts",
-        kicker: "Utility Drawer",
-        description: "A smaller cabinet of link-based tools for launching batches or building small interactive pranks.",
-        summary: "Open the drawer for fast link batching and the evasive yes-or-no experiment."
-    },
     "/open-all-urls": {
         template: "pages/openallurls.html",
         title: "Open All URLs",
