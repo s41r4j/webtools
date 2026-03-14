@@ -232,3 +232,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     handleLocation();
 });
+
+// Global Keyboard Shortcuts
+document.addEventListener("keydown", (event) => {
+    // Ignore if typing in an input or textarea
+    const activeElement = document.activeElement;
+    if (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable) {
+        return;
+    }
+
+    if (event.shiftKey) {
+        let index = null;
+        switch (event.key) {
+            case "0": index = "00"; break;
+            case "1": index = "01"; break;
+            case "2": index = "02"; break;
+            case "3": index = "03"; break;
+            case "4": index = "04"; break;
+        }
+
+        if (index !== null) {
+            const link = document.querySelector(`.site-nav a[data-index="${index}"]`);
+            if (link) {
+                event.preventDefault();
+                link.click();
+            }
+        }
+    }
+});

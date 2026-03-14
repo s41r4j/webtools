@@ -3,6 +3,13 @@
     gap: 18px;
 }
 
+.inline-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 .table-container {
     width: 100%;
 }
@@ -119,7 +126,7 @@ body.night-mode .category-row td {
     }
 
     body::before {
-        content: "s41r4j & Web Tools — Browser Fingerprint Report";
+        content: "Web Tools: Browser Fingerprint Report";
         display: block !important;
         position: static !important;
         font-family: monospace;
@@ -129,6 +136,22 @@ body.night-mode .category-row td {
         margin-bottom: 2rem;
         padding-bottom: 1rem;
         border-bottom: 2px solid #000;
+        text-align: center;
+        background: none !important;
+        opacity: 1 !important;
+        z-index: 1 !important;
+    }
+
+    body::after {
+        content: "Made with <3 by S41R4J";
+        display: block !important;
+        position: static !important;
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: #000;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #d8d8d8;
         text-align: center;
         background: none !important;
         opacity: 1 !important;

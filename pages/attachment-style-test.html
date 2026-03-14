@@ -248,6 +248,24 @@
     transition: all 0.15s;
   }
 
+  @media (max-width: 650px) {
+    .options-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .option-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 14px 18px;
+      font-size: 14px;
+    }
+
+    .scale-labels {
+      display: none;
+    }
+  }
+
   .option-btn:hover {
     border-color: rgba(201,136,74,0.5);
     color: var(--amber-light);

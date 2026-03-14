@@ -435,6 +435,13 @@ body.night-mode .tool-button {
     max-width: none !important;
 }
 
+@media (max-width: 760px) {
+    .landing-intro .panel-title {
+        word-break: break-word;
+        hyphens: auto;
+    }
+}
+
 .landing-meta div,
 .note-grid div {
     padding: 14px 16px;
@@ -641,6 +648,27 @@ textarea {
     .site-rail,
     .page-sheet {
         padding: 22px 20px;
+    }
+
+    .site-nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .site-nav a {
+        padding: 12px;
+        text-align: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .site-nav a .index {
+        display: none;
+    }
+
+    .route-note {
+        display: none;
     }
 
     .page-title {
