@@ -285,6 +285,36 @@
     updateOutput();
   });
 
+  // Global shortcut for 'z' to engage Zcrypt mode
+  document.addEventListener('keydown', function(event) {
+    const activeElement = document.activeElement;
+    if (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable) {
+        return;
+    }
+
+    if (event.key.toLowerCase() === 'z') {
+        event.preventDefault(); // Prevent 'z' from being typed if focus snaps too quickly
+        
+        // Select zcrypt
+        cryptoOptionElement.value = 'zcrypt';
+        
+        // Enable privacy mode if not already
+        if (!passwordToggle.checked) {
+            passwordToggle.checked = true;
+        }
+        
+        // Trigger updates manually
+        previousSignature = '';
+        updateMethodNotes();
+        togglePrivacy();
+        updateOutput();
+        
+        // Focus the input to start typing immediately
+        inputTextElement.focus();
+        showMessage('Zcrypt privacy mode engaged');
+    }
+  });
+
   updateMethodNotes();
   togglePrivacy();
   updateOutput();

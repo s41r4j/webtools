@@ -234,12 +234,12 @@ document.addEventListener("keydown", (event) => {
 
     if (event.shiftKey) {
         let index = null;
-        switch (event.key) {
-            case "0": index = "00"; break;
-            case "1": index = "01"; break;
-            case "2": index = "02"; break;
-            case "3": index = "03"; break;
-            case "4": index = "04"; break;
+        switch (event.code) {
+            case "Digit0": index = "00"; break;
+            case "Digit1": index = "01"; break;
+            case "Digit2": index = "02"; break;
+            case "Digit3": index = "03"; break;
+            case "Digit4": index = "04"; break;
         }
 
         if (index !== null) {
