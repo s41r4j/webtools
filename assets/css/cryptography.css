@@ -4,15 +4,34 @@
 
 .paper-form,
 .output-panel {
+    display: flex;
+    flex-direction: column;
     align-content: start;
+    height: 100%;
+}
+
+.field-stack {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 #inputText {
     min-height: 8rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #inputSalt {
     min-height: 4rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #inputSalt:disabled {
@@ -27,6 +46,9 @@ body.night-mode #inputSalt:disabled {
 
 #outputText {
     min-height: 12rem;
+    width: 100%;
+    flex-grow: 1;
+    box-sizing: border-box;
     background: rgba(24, 22, 18, 0.04);
 }
 

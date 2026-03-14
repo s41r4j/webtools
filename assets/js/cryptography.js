@@ -259,10 +259,25 @@
     }
   }
 
+  // Debounce helper to prevent heavy ops (like zcrypt) from freezing the UI on every keystroke
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  const debouncedUpdateOutput = debounce(updateOutput, 300);
+
   copyButton?.addEventListener('click', copyOutput);
   passwordToggle?.addEventListener('change', togglePrivacy);
-  inputTextElement.addEventListener('input', updateOutput);
-  inputSaltElement.addEventListener('input', updateOutput);
+  inputTextElement.addEventListener('input', debouncedUpdateOutput);
+  inputSaltElement.addEventListener('input', debouncedUpdateOutput);
   cryptoOptionElement.addEventListener('change', function () {
     previousSignature = '';
     updateMethodNotes();

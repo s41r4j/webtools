@@ -37,15 +37,6 @@ const routes = {
         kicker: "Diagnostics",
         description: "A secure cabinet of psychological tests securely evaluated on your local device.",
         summary: "Explore personality models and relationship dynamics without leaving a paper trail."
-    },
-    "/only-yes": {
-        template: "pages/onlyyes.html",
-        title: "Only Yes",
-        kicker: "Prank Drawer",
-        description: "A playful prompt page where the yes button stays put and the no button refuses to cooperate.",
-        summary: "A small novelty page with customizable question, answer, and button labels.",
-        script: "assets/js/onlyyes.js",
-        css: "assets/css/onlyyes.css"
     }
 };
 
