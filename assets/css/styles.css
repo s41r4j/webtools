@@ -147,7 +147,9 @@ strong {
     position: sticky;
     top: 24px;
     align-self: start;
-    display: grid;
+    height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
     gap: 22px;
     padding: 28px 24px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.44));
@@ -326,6 +328,7 @@ body.night-mode .tool-button {
 }
 
 .route-note {
+    margin-top: auto;
     padding-top: 20px;
     border-top: 1px dashed var(--rule);
     display: grid;
@@ -606,6 +609,7 @@ textarea {
 
     .site-rail {
         position: static;
+        height: auto;
     }
 
     .page-stage {
