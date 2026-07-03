@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <title>Opening Web Tools…</title>
+    <script>
+        (function () {
+            var locationObject = window.location;
+            var isProjectPage = locationObject.hostname.indexOf("github.io") !== -1;
+            var segments = locationObject.pathname.split("/").filter(Boolean);
+            var basePath = "";
+
+            if (isProjectPage && segments.length) {
+                basePath = "/" + segments.shift();
+            }
+
+            var requestedRoute = "/" + segments.join("/");
+            var params = new URLSearchParams();
+            params.set("p", requestedRoute || "/");
+
+            if (locationObject.search.length > 1) {
+                params.set("q", locationObject.search.slice(1));
+            }
+
+            locationObject.replace(
+                locationObject.origin + basePath + "/?" + params.toString() + locationObject.hash
+            );
+        }());
+    </script>
+</head>
+<body></body>
+</html>
