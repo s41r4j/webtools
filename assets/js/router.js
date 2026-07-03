@@ -5,7 +5,7 @@ const routes = {
         template: "pages/home.html",
         title: "Web Tools",
         kicker: "Desk Index",
-        description: "A paper-organized collection of browser-side utilities for inspection, encoding, and link experiments.",
+        description: "A paper-organized collection of browser-side utilities for inspection, encoding, camera work, and link experiments.",
         summary: "Start here to open the major worksheets or browse the smaller URL experiments."
     },
     "/browser-fingerprinting": {
@@ -37,6 +37,15 @@ const routes = {
         kicker: "Diagnostics",
         description: "A secure cabinet of psychological tests securely evaluated on your local device.",
         summary: "Explore personality models and relationship dynamics without leaving a paper trail."
+    },
+    "/webcam": {
+        template: "pages/webcam.html",
+        title: "Web Cam",
+        kicker: "Camera Worksheet",
+        description: "Capture, filter, enhance, save, and download photographs locally with any camera available to your browser.",
+        summary: "A private browser camera with digital zoom, filters, enhancement, and a local photo archive.",
+        script: "assets/js/webcam.js",
+        css: "assets/css/webcam.css"
     }
 };
 
@@ -153,6 +162,10 @@ const handleLocation = async () => {
     const path = normalizePath(window.location.pathname);
     const routeInfo = routes[path] || routes["/"];
 
+    if (typeof window.destroyWebcam === "function") {
+        window.destroyWebcam();
+    }
+
     updateNavigation(path);
     updateRouteMeta(path, routeInfo);
 
@@ -224,11 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
     handleLocation();
 });
 
-// Global Keyboard Shortcuts
+// Global worksheet shortcuts: Shift + number, or Shift + C for the camera.
 document.addEventListener("keydown", (event) => {
-    // Ignore if typing in an input or textarea
     const activeElement = document.activeElement;
-    if (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable) {
+    if (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.tagName === "SELECT" || activeElement.isContentEditable) {
         return;
     }
 
@@ -240,6 +252,7 @@ document.addEventListener("keydown", (event) => {
             case "Digit2": index = "02"; break;
             case "Digit3": index = "03"; break;
             case "Digit4": index = "04"; break;
+            case "KeyC": index = "04"; break;
         }
 
         if (index !== null) {
