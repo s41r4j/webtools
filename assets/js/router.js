@@ -45,7 +45,10 @@ const routes = {
         description: "Capture, filter, enhance, save, and download photographs locally with any camera available to your browser.",
         summary: "A private browser camera with digital zoom, filters, enhancement, and a local photo archive.",
         script: "assets/js/webcam.js?v=20260703-2",
-        css: "assets/css/webcam.css?v=20260703-2"
+        csses: [
+            "assets/css/webcam.css?v=20260703-2",
+            "assets/css/webcam-mobile-fix.css?v=20260703-1"
+        ]
     }
 };
 
@@ -231,7 +234,9 @@ const handleLocation = async () => {
 
         removeDynamicAssets();
 
-        if (routeInfo.css) {
+        if (routeInfo.csses) {
+            routeInfo.csses.forEach(loadCSS);
+        } else if (routeInfo.css) {
             loadCSS(routeInfo.css);
         }
 
