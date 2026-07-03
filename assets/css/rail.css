@@ -1,0 +1,240 @@
+.rail-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+}
+
+.rail-header .brand-mark {
+    min-width: 0;
+    padding-bottom: 20px;
+}
+
+.brand-full {
+    display: grid;
+    gap: 12px;
+}
+
+.brand-full .brand-kicker,
+.brand-full .brand-title,
+.brand-full .brand-copy {
+    display: block;
+}
+
+.brand-compact {
+    display: none;
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: var(--ink);
+}
+
+.rail-toggle {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--paper-strong) 78%, transparent);
+    color: var(--accent);
+    box-shadow: var(--button-shadow);
+    cursor: pointer;
+    transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.rail-toggle:hover {
+    background: var(--accent);
+    color: var(--accent-contrast);
+}
+
+.rail-toggle-icon {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.45rem;
+    line-height: 1;
+    transform: translateX(-1px);
+    transition: transform 0.2s ease;
+}
+
+.rail-content {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+body.rail-collapsed .app-shell {
+    grid-template-columns: 92px minmax(0, 1fr);
+}
+
+body.rail-collapsed .site-rail {
+    padding: 20px 13px;
+}
+
+body.rail-collapsed .rail-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+body.rail-collapsed .rail-header .brand-mark {
+    width: 100%;
+    display: grid;
+    place-items: center;
+    padding: 4px 0 16px;
+}
+
+body.rail-collapsed .brand-full {
+    display: none;
+}
+
+body.rail-collapsed .brand-compact {
+    display: block;
+}
+
+body.rail-collapsed .rail-toggle {
+    width: 36px;
+    height: 36px;
+}
+
+body.rail-collapsed .rail-toggle-icon {
+    transform: rotate(180deg) translateX(-1px);
+}
+
+body.rail-collapsed .rail-content {
+    gap: 14px;
+}
+
+body.rail-collapsed .site-nav a {
+    min-height: 48px;
+    justify-content: center;
+    padding: 10px 6px;
+    font-size: 0;
+}
+
+body.rail-collapsed .site-nav a::after {
+    font-size: 0.72rem;
+}
+
+body.rail-collapsed .rail-actions,
+body.rail-collapsed .route-note {
+    display: none;
+}
+
+@media (max-width: 1180px) and (min-width: 761px) {
+    body.rail-collapsed .app-shell {
+        grid-template-columns: 92px minmax(0, 1fr);
+    }
+
+    body.rail-collapsed .site-rail {
+        position: sticky;
+        top: 24px;
+        height: calc(100vh - 48px);
+    }
+}
+
+@media (max-width: 760px) {
+    .rail-header {
+        align-items: center;
+    }
+
+    .rail-header .brand-mark {
+        padding: 0;
+        border-bottom: 0;
+    }
+
+    .brand-full {
+        gap: 3px;
+    }
+
+    .brand-full .brand-kicker,
+    .brand-full .brand-copy {
+        display: none;
+    }
+
+    .brand-full .brand-title {
+        font-size: 1.75rem;
+        white-space: nowrap;
+    }
+
+    .rail-toggle {
+        width: 42px;
+        height: 42px;
+    }
+
+    .rail-toggle-icon {
+        transform: rotate(-90deg);
+    }
+
+    .rail-content {
+        padding-top: 16px;
+        border-top: 1px solid var(--rule);
+    }
+
+    body.rail-collapsed .app-shell {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    body.rail-collapsed .site-rail {
+        padding: 16px 18px;
+    }
+
+    body.rail-collapsed .rail-header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        justify-items: stretch;
+    }
+
+    body.rail-collapsed .rail-header .brand-mark {
+        display: block;
+        width: auto;
+        padding: 0;
+    }
+
+    body.rail-collapsed .brand-full {
+        display: grid;
+    }
+
+    body.rail-collapsed .brand-compact {
+        display: none;
+    }
+
+    body.rail-collapsed .rail-toggle {
+        width: 42px;
+        height: 42px;
+    }
+
+    body.rail-collapsed .rail-toggle-icon {
+        transform: rotate(90deg);
+    }
+
+    body.rail-collapsed .rail-content {
+        display: none;
+    }
+
+    body:not(.rail-collapsed) .site-nav a {
+        font-size: 0.7rem;
+    }
+
+    body:not(.rail-collapsed) .rail-actions {
+        flex-direction: row;
+    }
+
+    body:not(.rail-collapsed) .rail-btn {
+        width: auto;
+        flex: 1;
+    }
+}
+
+body[data-route="webcam"] .rail-toggle {
+    visibility: visible;
+}
+
+@media (max-width: 760px) {
+    body[data-route="webcam"] .site-rail {
+        display: none !important;
+    }
+}
