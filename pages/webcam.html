@@ -1,0 +1,134 @@
+<section class="webcam-workspace" aria-label="Web camera">
+    <div class="webcam-main">
+        <div id="webcam-stage" class="webcam-stage" data-ratio="4:3">
+            <video id="webcam-video" autoplay playsinline muted></video>
+            <div id="webcam-grid" class="webcam-grid" aria-hidden="true"></div>
+
+            <div class="webcam-topbar">
+                <div class="webcam-live-status" id="webcam-status" aria-live="polite">
+                    <span class="webcam-status-dot" aria-hidden="true"></span>
+                    <span id="webcam-status-text">Preparing camera</span>
+                </div>
+
+                <div class="webcam-top-actions">
+                    <button id="webcam-timer-button" class="webcam-icon-button" type="button" aria-label="Change timer" title="Timer off">
+                        <span id="webcam-timer-label">0s</span>
+                    </button>
+                    <button id="webcam-ratio-button" class="webcam-icon-button" type="button" aria-label="Change photo ratio" title="Ratio 4 by 3">
+                        <span id="webcam-ratio-label">4:3</span>
+                    </button>
+                    <button id="webcam-grid-button" class="webcam-icon-button" type="button" aria-label="Toggle composition grid" aria-pressed="false" title="Composition grid">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 10h16M4 16h16M10 4v16M16 4v16"/></svg>
+                    </button>
+                    <button id="webcam-settings-button" class="webcam-icon-button" type="button" aria-label="Open camera settings" aria-expanded="false" title="Camera settings">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="webcam-settings" class="webcam-settings" hidden>
+                <div class="webcam-settings-head">
+                    <div>
+                        <p class="panel-kicker">Camera Settings</p>
+                        <h3>Adjust the lens</h3>
+                    </div>
+                    <button id="webcam-settings-close" class="webcam-close-button" type="button" aria-label="Close camera settings">×</button>
+                </div>
+
+                <div class="webcam-setting-field">
+                    <label for="webcam-camera-select">Camera source</label>
+                    <select id="webcam-camera-select">
+                        <option value="">Detecting cameras…</option>
+                    </select>
+                </div>
+
+                <div class="webcam-setting-actions">
+                    <button id="webcam-refresh-button" class="tool-button tool-button--ghost" type="button">Refresh cameras</button>
+                    <button id="webcam-mirror-button" class="tool-button tool-button--ghost" type="button" aria-pressed="false">Mirror off</button>
+                </div>
+
+                <div class="webcam-setting-field">
+                    <label>Digital zoom</label>
+                    <div id="webcam-settings-zoom" class="webcam-option-row" aria-label="Digital zoom level">
+                        <button type="button" data-zoom="1" class="is-active">1×</button>
+                        <button type="button" data-zoom="1.2">1.2×</button>
+                        <button type="button" data-zoom="1.5">1.5×</button>
+                        <button type="button" data-zoom="2">2×</button>
+                    </div>
+                </div>
+
+                <div class="webcam-shortcuts">
+                    <span>Space</span><strong>Capture</strong>
+                    <span>G</span><strong>Grid</strong>
+                    <span>M</span><strong>Mirror</strong>
+                    <span>S</span><strong>Settings</strong>
+                </div>
+            </div>
+
+            <div class="webcam-bottom-ui">
+                <div id="webcam-filter-strip" class="webcam-filter-strip" aria-label="Camera filters">
+                    <button type="button" data-filter="none" class="is-active">Natural</button>
+                    <button type="button" data-filter="vivid">Vivid</button>
+                    <button type="button" data-filter="warm">Warm</button>
+                    <button type="button" data-filter="cool">Cool</button>
+                    <button type="button" data-filter="mono">Mono</button>
+                </div>
+
+                <div id="webcam-zoom-strip" class="webcam-zoom-strip" aria-label="Digital zoom level">
+                    <button type="button" data-zoom="1" class="is-active">1×</button>
+                    <button type="button" data-zoom="1.2">1.2×</button>
+                    <button type="button" data-zoom="1.5">1.5×</button>
+                    <button type="button" data-zoom="2">2×</button>
+                </div>
+
+                <div class="webcam-shutter-row">
+                    <button id="webcam-gallery-button" class="webcam-thumbnail-button" type="button" aria-label="Open saved photos">
+                        <span class="webcam-empty-thumbnail">04</span>
+                    </button>
+
+                    <button id="webcam-capture-button" class="webcam-shutter" type="button" aria-label="Take photo" disabled></button>
+
+                    <button id="webcam-switch-button" class="webcam-switch-button" type="button" aria-label="Switch camera" title="Switch camera" disabled>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-3l-2-2H9L7 7H4v12h16z"/><path d="M9 13a3 3 0 0 0 5 2M15 11a3 3 0 0 0-5-2"/><path d="m10 16-1-3 3 1M14 8l1 3-3-1"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="webcam-permission" class="webcam-permission">
+                <div class="webcam-permission-copy">
+                    <p class="panel-kicker">Local Camera Worksheet</p>
+                    <h3 id="webcam-permission-title">Frame the moment.</h3>
+                    <p id="webcam-permission-message">Allow camera access to begin. Every photograph remains on this device until you download or delete it.</p>
+                </div>
+                <button id="webcam-enable-button" class="tool-button tool-button--primary" type="button">Enable camera</button>
+            </div>
+
+            <div id="webcam-countdown" class="webcam-countdown" aria-live="assertive"></div>
+        </div>
+
+        <p class="webcam-privacy-line">Private by design · Stored only in this browser · HTTPS or localhost required</p>
+    </div>
+
+    <aside id="webcam-gallery-panel" class="webcam-gallery-panel paper-panel" aria-label="Saved photographs">
+        <div class="webcam-gallery-head">
+            <div>
+                <p class="panel-kicker">Local Archive</p>
+                <h3>Photographs</h3>
+                <p id="webcam-photo-count">0 saved</p>
+            </div>
+            <button id="webcam-gallery-close" class="webcam-close-button" type="button" aria-label="Close saved photographs">×</button>
+        </div>
+
+        <div class="webcam-gallery-actions">
+            <button id="webcam-download-all" class="tool-button tool-button--ghost" type="button" disabled>Download all</button>
+            <button id="webcam-delete-all" class="tool-button tool-button--danger" type="button" disabled>Delete all</button>
+        </div>
+
+        <div id="webcam-gallery" class="webcam-gallery"></div>
+    </aside>
+</section>
+
+<div id="webcam-gallery-backdrop" class="webcam-gallery-backdrop" aria-hidden="true"></div>
+<canvas id="webcam-canvas" hidden></canvas>
+<div id="webcam-toast" class="webcam-toast" role="status" aria-live="polite"></div>
+<div id="webcam-flash" class="webcam-flash" aria-hidden="true"></div>
