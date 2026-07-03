@@ -39,13 +39,13 @@ const routes = {
         summary: "Explore personality models and relationship dynamics without leaving a paper trail."
     },
     "/webcam": {
-        template: "pages/webcam.html",
+        template: "pages/webcam.html?v=20260703-2",
         title: "Web Cam",
         kicker: "Camera Worksheet",
         description: "Capture, filter, enhance, save, and download photographs locally with any camera available to your browser.",
         summary: "A private browser camera with digital zoom, filters, enhancement, and a local photo archive.",
-        script: "assets/js/webcam.js",
-        css: "assets/css/webcam.css"
+        script: "assets/js/webcam.js?v=20260703-2",
+        css: "assets/css/webcam.css?v=20260703-2"
     }
 };
 
@@ -141,6 +141,51 @@ async function loadScripts(paths) {
     }
 }
 
+function ensureRailStyles() {
+    if (document.querySelector('link[data-rail-styles="true"]')) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = withBasePath("assets/css/rail.css?v=20260703-2");
+    link.setAttribute("data-rail-styles", "true");
+    document.head.appendChild(link);
+}
+
+function initializeCollapsibleRail() {
+    const rail = document.getElementById("site-rail");
+    const toggle = document.getElementById("btn-rail-toggle");
+    const content = document.getElementById("rail-content");
+    if (!rail || !toggle || !content || toggle.dataset.ready === "true") return;
+
+    toggle.dataset.ready = "true";
+    const mobileQuery = window.matchMedia("(max-width: 760px)");
+
+    const applyCollapsed = (collapsed, persist = true) => {
+        document.body.classList.toggle("rail-collapsed", collapsed);
+        rail.classList.toggle("is-collapsed", collapsed);
+        toggle.setAttribute("aria-expanded", String(!collapsed));
+        toggle.title = collapsed ? "Expand side panel" : "Collapse side panel";
+
+        if (persist && !mobileQuery.matches) {
+            localStorage.setItem("webtools-rail", collapsed ? "collapsed" : "expanded");
+        }
+    };
+
+    const applyResponsiveState = () => {
+        if (mobileQuery.matches) {
+            applyCollapsed(true, false);
+        } else {
+            applyCollapsed(localStorage.getItem("webtools-rail") === "collapsed", false);
+        }
+    };
+
+    toggle.addEventListener("click", () => {
+        applyCollapsed(!document.body.classList.contains("rail-collapsed"));
+    });
+
+    mobileQuery.addEventListener?.("change", applyResponsiveState);
+    applyResponsiveState();
+}
+
 const route = async (event) => {
     const anchor = event?.currentTarget || event?.target?.closest("a");
     if (!anchor) {
@@ -170,9 +215,13 @@ const handleLocation = async () => {
     updateRouteMeta(path, routeInfo);
 
     try {
-        const response = await fetch(withBasePath(routeInfo.template));
+        const response = await fetch(withBasePath(routeInfo.template), {
+            cache: "no-store",
+            headers: { "Cache-Control": "no-cache" }
+        });
+
         if (!response.ok) {
-            throw new Error(`Unable to load ${routeInfo.template}`);
+            throw new Error(`Unable to load ${routeInfo.template} (${response.status})`);
         }
 
         const html = await response.text();
@@ -218,6 +267,9 @@ window.toggleTheme = () => {
 window.onpopstate = handleLocation;
 
 document.addEventListener("DOMContentLoaded", () => {
+    ensureRailStyles();
+    initializeCollapsibleRail();
+
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "night" || savedTheme === "dark") {
         document.body.classList.add("night-mode");
