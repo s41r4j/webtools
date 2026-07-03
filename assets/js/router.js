@@ -39,15 +39,19 @@ const routes = {
         summary: "Explore personality models and relationship dynamics without leaving a paper trail."
     },
     "/webcam": {
-        template: "pages/webcam.html?v=20260703-4",
+        template: "pages/webcam.html?v=20260703-5",
         title: "Web Cam",
         kicker: "Camera Worksheet",
         description: "Capture, filter, enhance, save, and download photographs locally with any camera available to your browser.",
-        summary: "A private browser camera with digital zoom, filters, enhancement, and a local photo archive.",
-        script: "assets/js/webcam.js?v=20260703-4",
+        summary: "A private browser camera with digital zoom, filters, enhancement, tap-to-focus, and a local photo archive.",
+        scripts: [
+            "assets/js/webcam.js?v=20260703-5",
+            "assets/js/webcam-focus.js?v=20260703-1"
+        ],
         csses: [
             "assets/css/webcam.css?v=20260703-3",
-            "assets/css/webcam-mobile-fix.css?v=20260703-3"
+            "assets/css/webcam-mobile-fix.css?v=20260703-3",
+            "assets/css/webcam-focus.css?v=20260703-1"
         ]
     }
 };
