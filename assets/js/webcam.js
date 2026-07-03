@@ -1,1 +1,936 @@
-(()=>{"use strict";window.destroyWebcam&&window.destroyWebcam();const e=e=>document.getElementById(e),t={stage:e("webcam-stage"),video:e("webcam-video"),canvas:e("webcam-canvas"),grid:e("webcam-grid"),status:e("webcam-status"),statusText:e("webcam-status-text"),cameraSelect:e("webcam-camera-select"),refreshButton:e("webcam-refresh-button"),enableButton:e("webcam-enable-button"),captureButton:e("webcam-capture-button"),switchButton:e("webcam-switch-button"),gridButton:e("webcam-grid-button"),mirrorButton:e("webcam-mirror-button"),timerButton:e("webcam-timer-button"),timerLabel:e("webcam-timer-label"),ratioButton:e("webcam-ratio-button"),ratioLabel:e("webcam-ratio-label"),settingsButton:e("webcam-settings-button"),settingsClose:e("webcam-settings-close"),settings:e("webcam-settings"),settingsZoom:e("webcam-settings-zoom"),filterStrip:e("webcam-filter-strip"),zoomStrip:e("webcam-zoom-strip"),galleryButton:e("webcam-gallery-button"),galleryPanel:e("webcam-gallery-panel"),galleryClose:e("webcam-gallery-close"),galleryBackdrop:e("webcam-gallery-backdrop"),gallery:e("webcam-gallery"),photoCount:e("webcam-photo-count"),downloadAll:e("webcam-download-all"),deleteAll:e("webcam-delete-all"),permission:e("webcam-permission"),permissionTitle:e("webcam-permission-title"),permissionMessage:e("webcam-permission-message"),countdown:e("webcam-countdown"),toast:e("webcam-toast"),flash:e("webcam-flash")};if(!t.stage||!t.video)return;const a="photos",o={none:"none",vivid:"saturate(1.28) contrast(1.09)",warm:"sepia(0.15) saturate(1.16) hue-rotate(-7deg)",cool:"saturate(1.08) hue-rotate(9deg) brightness(1.02)",mono:"grayscale(1) contrast(1.12)"},n=[{label:"4:3",key:"4:3",value:4/3},{label:"1:1",key:"1:1",value:1},{label:"16:9",key:"16:9",value:16/9},{label:"Full",key:"full",value:null}];let r=null,i=null,c=[],s="",l=!1,d=!1,u=0,m=0,h=1,g="none",b=!1,w=null,p=[],v=!1;function f(e,a=""){t.statusText.textContent=e,t.status.classList.remove("is-live","is-error"),a&&t.status.classList.add(a)}function y(e){clearTimeout(w),t.toast.textContent=e,t.toast.classList.add("is-visible"),w=setTimeout(()=>t.toast.classList.remove("is-visible"),2200)}function E(e,a,o="Enable camera"){t.permissionTitle.textContent=e,t.permissionMessage.textContent=a,t.enableButton.textContent=o,t.permission.classList.remove("is-hidden")}function B(e){switch(e?.name){case"NotAllowedError":case"PermissionDeniedError":return"Camera permission was denied. Allow it in your browser settings, then try again.";case"NotFoundError":case"DevicesNotFoundError":return"No camera was found on this device.";case"NotReadableError":case"TrackStartError":return"The camera is busy. Close other camera apps and try again.";case"OverconstrainedError":case"ConstraintNotSatisfiedError":return"The selected camera cannot provide the requested settings.";case"SecurityError":return"Camera access requires HTTPS or localhost.";default:return e?.message||"The camera could not be opened."}}function L(){i&&(i.getTracks().forEach(e=>e.stop()),i=null,t.video.srcObject=null,t.captureButton.disabled=!0)}async function S(e=s){const a=await navigator.mediaDevices.enumerateDevices();if(c=a.filter(e=>"videoinput"===e.kind),t.cameraSelect.innerHTML="",!c.length){const e=document.createElement("option");return e.value="",e.textContent="No cameras found",t.cameraSelect.appendChild(e),t.cameraSelect.disabled=!0,t.switchButton.disabled=!0,[]}c.forEach((e,a)=>{const o=document.createElement("option");o.value=e.deviceId,o.textContent=e.label||`Camera ${a+1}`,t.cameraSelect.appendChild(o)});const o=c.some(t=>t.deviceId===e);return s=o?e:c[0].deviceId,t.cameraSelect.value=s,t.cameraSelect.disabled=!1,t.switchButton.disabled=c.length<2,c}async function k(e=""){L(),f("Opening camera");const a=e?{deviceId:{exact:e},width:{ideal:2560},height:{ideal:1440}}:{facingMode:{ideal:"environment"},width:{ideal:2560},height:{ideal:1440}};try{i=await navigator.mediaDevices.getUserMedia({video:a,audio:!1}),t.video.srcObject=i,await t.video.play();const o=i.getVideoTracks()[0];s=o?.getSettings?.().deviceId||e||s,await S(s),t.permission.classList.add("is-hidden"),t.captureButton.disabled=!1,f(o?.label||"Camera ready","is-live")}catch(e){console.error(e);const t=B(e);throw f("Camera unavailable","is-error"),E("Open the lens.",t,"Try again"),e}}async function C(){t.enableButton.disabled=!0,t.refreshButton.disabled=!0,f("Requesting permission");try{if(!window.isSecureContext&&"localhost"!==location.hostname&&"127.0.0.1"!==location.hostname)throw new Error("Camera access requires HTTPS or localhost.");await async function(){if(!navigator.mediaDevices?.getUserMedia)throw new Error("This browser does not support camera access.");const e=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:2560},height:{ideal:1440}},audio:!1}),t=e.getVideoTracks()[0];s=t?.getSettings?.().deviceId||"",e.getTracks().forEach(e=>e.stop())}();if(!(await S(s)).length)throw new Error("No camera was found on this device.");await k(t.cameraSelect.value)}catch(e){console.error(e),f("Permission required","is-error"),E("Frame the moment.",B(e),"Enable camera")}finally{t.enableButton.disabled=!1,t.refreshButton.disabled=!1}}function T(){t.stage.style.setProperty("--webcam-zoom",String(h)),t.stage.style.setProperty("--webcam-filter",o[g]||"none"),t.video.classList.toggle("is-mirrored",d),document.querySelectorAll("#webcam-zoom-strip [data-zoom], #webcam-settings-zoom [data-zoom]").forEach(e=>{e.classList.toggle("is-active",Number(e.dataset.zoom)===h)}),t.filterStrip.querySelectorAll("[data-filter]").forEach(e=>{e.classList.toggle("is-active",e.dataset.filter===g)})}function x(){l=!l,t.grid.classList.toggle("is-visible",l),t.gridButton.classList.toggle("is-active",l),t.gridButton.setAttribute("aria-pressed",String(l))}function A(){d=!d,t.mirrorButton.textContent=d?"Mirror on":"Mirror off",t.mirrorButton.setAttribute("aria-pressed",String(d)),T()}function D(e){t.settings.hidden=!e,t.settingsButton.setAttribute("aria-expanded",String(e)),t.settingsButton.classList.toggle("is-active",e)}function P(e,t="image/jpeg",a=.95){return new Promise((o,n)=>{e.toBlob(e=>{e?o(e):n(new Error("The photograph could not be created."))},t,a)})}async function $(){if(!b)if(!i||t.video.readyState<HTMLMediaElement.HAVE_CURRENT_DATA)y("The camera is not ready");else{b=!0,t.captureButton.disabled=!0;try{await(e=u,new Promise(a=>{if(!e)return void a();let o=e;t.countdown.textContent=String(o),t.countdown.classList.add("is-visible");const n=setInterval(()=>{if(o-=1,o<=0)return clearInterval(n),t.countdown.textContent="",t.countdown.classList.remove("is-visible"),void a();t.countdown.textContent=String(o)},1e3)}));const a=t.video.videoWidth,r=t.video.videoHeight;if(!a||!r)throw new Error("The live frame could not be read.");const i=function(e,t){let a=e/h,o=t/h,r=(e-a)/2,i=(t-o)/2;const c=n[m].value;if(!c)return{x:r,y:i,width:a,height:o};if(a/o>c){const e=o*c;r+=(a-e)/2,a=e}else{const e=a/c;i+=(o-e)/2,o=e}return{x:r,y:i,width:a,height:o}}(a,r);t.canvas.width=Math.round(i.width),t.canvas.height=Math.round(i.height);const c=t.canvas.getContext("2d",{alpha:!1});c.save(),d&&(c.translate(t.canvas.width,0),c.scale(-1,1)),c.filter=o[g]||"none",c.drawImage(t.video,i.x,i.y,i.width,i.height,0,0,t.canvas.width,t.canvas.height),c.restore();const s=await P(t.canvas);await N({id:`${Date.now()}-${crypto.randomUUID?crypto.randomUUID():Math.random().toString(16).slice(2)}`,createdAt:Date.now(),width:t.canvas.width,height:t.canvas.height,ratio:n[m].label,filter:g,digitalZoom:h,enhanced:!1,blob:s}),t.flash.classList.remove("is-active"),t.flash.offsetWidth,t.flash.classList.add("is-active"),await q(),y("Photograph saved locally")}catch(e){console.error(e),y(e.message||"The photograph could not be saved")}finally{b=!1,t.captureButton.disabled=!i}var e}}function M(){return"indexedDB"in window?r||(r=new Promise((e,t)=>{const o=indexedDB.open("WebToolsCameraPhotos",1);o.onupgradeneeded=()=>{const e=o.result;if(!e.objectStoreNames.contains(a)){e.createObjectStore(a,{keyPath:"id"}).createIndex("createdAt","createdAt")}},o.onsuccess=()=>e(o.result),o.onerror=()=>t(o.error||new Error("Photo storage could not be opened.")),o.onblocked=()=>t(new Error("Photo storage is blocked by another tab."))}),r):Promise.reject(new Error("Local photo storage is unavailable."))}async function N(e){const t=await M();return new Promise((o,n)=>{const r=t.transaction(a,"readwrite");r.objectStore(a).put(e),r.oncomplete=o,r.onerror=()=>n(r.error||new Error("The photograph could not be stored."))})}async function U(){const e=await M();return new Promise((t,o)=>{const n=e.transaction(a,"readonly").objectStore(a).getAll();n.onsuccess=()=>t((n.result||[]).sort((e,t)=>t.createdAt-e.createdAt)),n.onerror=()=>o(n.error||new Error("Saved photographs could not be loaded."))})}async function j(e){if(e.enhanced&&e.originalBlob)return e.blob=e.originalBlob,e.originalBlob=null,e.enhanced=!1,await N(e),await q(),void y("Original photograph restored");const t=await(a=e.blob,new Promise((e,t)=>{const o=URL.createObjectURL(a),n=new Image;n.onload=()=>{URL.revokeObjectURL(o),e(n)},n.onerror=()=>{URL.revokeObjectURL(o),t(new Error("The photograph could not be processed."))},n.src=o}));var a;const o=document.createElement("canvas");o.width=t.naturalWidth,o.height=t.naturalHeight;const n=o.getContext("2d",{alpha:!1});n.filter="brightness(1.035) contrast(1.09) saturate(1.12)",n.drawImage(t,0,0);const r=await P(o,"image/jpeg",.96);e.originalBlob=e.blob,e.blob=r,e.enhanced=!0,await N(e),await q(),y("Photograph enhanced")}function I(){p.forEach(e=>URL.revokeObjectURL(e)),p=[]}function R(e,t=""){const a=new Date(e),o=e=>String(e).padStart(2,"0");return`web-cam_${a.getFullYear()}-${o(a.getMonth()+1)}-${o(a.getDate())}_${o(a.getHours())}-${o(a.getMinutes())}-${o(a.getSeconds())}${t}.jpg`}function O(e,t){const a=URL.createObjectURL(e),o=document.createElement("a");o.href=a,o.download=t,document.body.appendChild(o),o.click(),o.remove(),setTimeout(()=>URL.revokeObjectURL(a),1300)}function z(){const e=document.createElement("div");return e.className="webcam-empty-gallery",e.innerHTML="<span>04</span><strong>Your archive is empty.</strong><p>Use the shutter to create a photograph. Nothing leaves this browser.</p>",e}function H(e,t){const o=document.createElement("article");o.className="webcam-photo-card";const n=document.createElement("img");n.src=t,n.alt=`Photograph taken ${new Date(e.createdAt).toLocaleString()}`,n.loading="lazy";const r=document.createElement("div");r.className="webcam-photo-meta";const i=document.createElement("time");i.className="webcam-photo-time",i.dateTime=new Date(e.createdAt).toISOString(),i.textContent=`${new Date(e.createdAt).toLocaleString()} · ${e.ratio||"4:3"}${e.enhanced?" · Enhanced":""}`;const c=document.createElement("div");c.className="webcam-photo-actions";const s=document.createElement("button");s.type="button",s.className="webcam-photo-download",s.textContent="Download",s.addEventListener("click",()=>O(e.blob,R(e.createdAt)));const l=document.createElement("button");l.type="button",l.className="webcam-photo-enhance",l.textContent=e.enhanced?"Restore":"Enhance",l.addEventListener("click",async()=>{l.disabled=!0;try{await j(e)}catch(e){console.error(e),y("Enhancement failed"),l.disabled=!1}});const d=document.createElement("button");return d.type="button",d.className="webcam-photo-delete",d.textContent="×",d.setAttribute("aria-label","Delete photograph"),d.addEventListener("click",async()=>{await async function(e){const t=await M();return new Promise((o,n)=>{const r=t.transaction(a,"readwrite");r.objectStore(a).delete(e),r.oncomplete=o,r.onerror=()=>n(r.error||new Error("The photograph could not be deleted."))})}(e.id),await q(),y("Photograph deleted")}),c.append(s,l,d),r.append(i,c),o.append(n,r),o}function W(e,a){if(t.galleryButton.innerHTML="",!e||!a){const e=document.createElement("span");return e.className="webcam-empty-thumbnail",e.textContent="04",void t.galleryButton.appendChild(e)}const o=document.createElement("img");o.src=a,o.alt="Open saved photographs",t.galleryButton.appendChild(o)}async function q(){try{const e=await U();if(I(),t.gallery.innerHTML="",t.photoCount.textContent=`${e.length} saved`,t.downloadAll.disabled=0===e.length,t.deleteAll.disabled=0===e.length,!e.length)return t.gallery.appendChild(z()),void W(null,null);e.forEach((e,a)=>{const o=URL.createObjectURL(e.blob);p.push(o),t.gallery.appendChild(H(e,o)),0===a&&W(e,o)})}catch(e){console.error(e),t.gallery.innerHTML="",t.gallery.appendChild(z()),y("Local photo storage is unavailable")}}function F(e){window.matchMedia("(max-width: 760px)").matches&&(t.galleryPanel.classList.toggle("is-open",e),t.galleryBackdrop.classList.toggle("is-open",e),t.galleryBackdrop.setAttribute("aria-hidden",String(!e)))}const _=[];function V(e,t,a,o){e?.addEventListener(t,a,o),_.push(()=>e?.removeEventListener(t,a,o))}V(t.enableButton,"click",C),V(t.captureButton,"click",$),V(t.switchButton,"click",async function(){if(c.length<2)return void y("Only one camera is available");const e=Math.max(0,c.findIndex(e=>e.deviceId===s)),a=c[(e+1)%c.length];t.switchButton.disabled=!0;try{await k(a.deviceId)}finally{t.switchButton.disabled=c.length<2}}),V(t.gridButton,"click",x),V(t.mirrorButton,"click",A),V(t.timerButton,"click",function(){const e=[0,3,5,10];u=e[(e.indexOf(u)+1)%e.length],t.timerLabel.textContent=`${u}s`,t.timerButton.classList.toggle("is-active",u>0),t.timerButton.title=u?`Timer ${u} seconds`:"Timer off",y(u?`${u}-second timer`:"Timer disabled")}),V(t.ratioButton,"click",function(){m=(m+1)%n.length;const e=n[m];t.stage.dataset.ratio=e.key,t.ratioLabel.textContent=e.label,t.ratioButton.classList.toggle("is-active",0!==m),y(`Photo ratio ${e.label}`)}),V(t.settingsButton,"click",()=>D(t.settings.hidden)),V(t.settingsClose,"click",()=>D(!1)),V(t.galleryButton,"click",()=>F(!0)),V(t.galleryClose,"click",()=>F(!1)),V(t.galleryBackdrop,"click",()=>F(!1)),V(t.downloadAll,"click",async function(){const e=await U();for(let t=0;t<e.length;t+=1)O(e[t].blob,R(e[t].createdAt,`_${t+1}`)),await new Promise(e=>setTimeout(e,170));e.length&&y(`Downloading ${e.length} photographs`)}),V(t.deleteAll,"click",async function(){const e=await U();e.length&&window.confirm(`Delete all ${e.length} photographs from this browser?`)&&(await async function(){const e=await M();return new Promise((t,o)=>{const n=e.transaction(a,"readwrite");n.objectStore(a).clear(),n.oncomplete=t,n.onerror=()=>o(n.error||new Error("The archive could not be cleared."))})}(),await q(),y("Local archive cleared"))}),V(t.refreshButton,"click",async()=>{t.refreshButton.disabled=!0;try{const e=await S(s);!i&&e.length&&await k(t.cameraSelect.value),y(`${e.length} ${1===e.length?"camera":"cameras"} detected`)}catch(e){console.error(e),y(B(e))}finally{t.refreshButton.disabled=!1}}),V(t.cameraSelect,"change",async()=>{const e=t.cameraSelect.value;if(e&&e!==s){t.cameraSelect.disabled=!0;try{await k(e)}finally{t.cameraSelect.disabled=!1}}}),V(t.filterStrip,"click",e=>{const t=e.target.closest("[data-filter]");var a;t&&(a=t.dataset.filter,g=o[a]?a:"none",T(),y(`${"none"===g?"Natural":g} filter`))});const Z=e=>{const t=e.target.closest("[data-zoom]");var a;t&&(a=t.dataset.zoom,h=Math.max(1,Math.min(2,Number(a)||1)),T(),y(`Digital zoom ${h.toFixed(h%1?1:0)}×`))};V(t.zoomStrip,"click",Z),V(t.settingsZoom,"click",Z),V(document,"keydown",function(e){const a=document.activeElement;a?.matches("input, textarea, select")||a?.isContentEditable||("Space"===e.code?(e.preventDefault(),$()):"g"===e.key.toLowerCase()?x():"m"===e.key.toLowerCase()?A():"s"===e.key.toLowerCase()?D(t.settings.hidden):"Escape"===e.key&&(D(!1),F(!1)))});const Y=async()=>{try{await S(s)}catch(e){console.error(e)}};navigator.mediaDevices?.addEventListener?.("devicechange",Y),T(),q(),C(),window.destroyWebcam=()=>{v||(v=!0,clearTimeout(w),L(),I(),_.forEach(e=>e()),navigator.mediaDevices?.removeEventListener?.("devicechange",Y),delete window.destroyWebcam)}})();
+(() => {
+    "use strict";
+
+    if (typeof window.destroyWebcam === "function") {
+        window.destroyWebcam();
+    }
+
+    const byId = (id) => document.getElementById(id);
+    const el = {
+        stage: byId("webcam-stage"),
+        video: byId("webcam-video"),
+        canvas: byId("webcam-canvas"),
+        grid: byId("webcam-grid"),
+        status: byId("webcam-status"),
+        statusText: byId("webcam-status-text"),
+        cameraSelect: byId("webcam-camera-select"),
+        refreshButton: byId("webcam-refresh-button"),
+        enableButton: byId("webcam-enable-button"),
+        captureButton: byId("webcam-capture-button"),
+        switchButton: byId("webcam-switch-button"),
+        gridButton: byId("webcam-grid-button"),
+        mirrorButton: byId("webcam-mirror-button"),
+        timerButton: byId("webcam-timer-button"),
+        timerLabel: byId("webcam-timer-label"),
+        ratioButton: byId("webcam-ratio-button"),
+        ratioLabel: byId("webcam-ratio-label"),
+        settingsButton: byId("webcam-settings-button"),
+        settingsClose: byId("webcam-settings-close"),
+        settings: byId("webcam-settings"),
+        settingsZoom: byId("webcam-settings-zoom"),
+        filterStrip: byId("webcam-filter-strip"),
+        zoomStrip: byId("webcam-zoom-strip"),
+        galleryButton: byId("webcam-gallery-button"),
+        galleryPanel: byId("webcam-gallery-panel"),
+        galleryClose: byId("webcam-gallery-close"),
+        galleryBackdrop: byId("webcam-gallery-backdrop"),
+        gallery: byId("webcam-gallery"),
+        photoCount: byId("webcam-photo-count"),
+        downloadAll: byId("webcam-download-all"),
+        deleteAll: byId("webcam-delete-all"),
+        permission: byId("webcam-permission"),
+        permissionTitle: byId("webcam-permission-title"),
+        permissionMessage: byId("webcam-permission-message"),
+        countdown: byId("webcam-countdown"),
+        toast: byId("webcam-toast"),
+        flash: byId("webcam-flash")
+    };
+
+    if (!el.stage || !el.video) return;
+
+    const isMobile = window.matchMedia("(max-width: 760px)");
+    const DB_NAME = "WebToolsCameraPhotos";
+    const STORE_NAME = "photos";
+
+    const FILTERS = {
+        none: "none",
+        vivid: "saturate(1.28) contrast(1.09)",
+        warm: "sepia(0.15) saturate(1.16) hue-rotate(-7deg)",
+        cool: "saturate(1.08) hue-rotate(9deg) brightness(1.02)",
+        mono: "grayscale(1) contrast(1.12)"
+    };
+
+    const RATIOS = [
+        { label: "4:3", key: "4:3", value: 4 / 3 },
+        { label: "1:1", key: "1:1", value: 1 },
+        { label: "16:9", key: "16:9", value: 16 / 9 },
+        { label: "Full", key: "full", value: null }
+    ];
+
+    let databasePromise = null;
+    let stream = null;
+    let devices = [];
+    let activeDeviceId = "";
+    let facingMode = "user";
+    let gridEnabled = false;
+    let mirrored = false;
+    let timerSeconds = 0;
+    let ratioIndex = 0;
+    let digitalZoom = 1;
+    let activeFilter = "none";
+    let captureLocked = false;
+    let toastTimer = null;
+    let objectUrls = [];
+    let destroyed = false;
+    const removeListeners = [];
+
+    function listen(target, eventName, handler, options) {
+        target?.addEventListener(eventName, handler, options);
+        removeListeners.push(() => target?.removeEventListener(eventName, handler, options));
+    }
+
+    function setStatus(message, type = "") {
+        el.statusText.textContent = message;
+        el.status.classList.remove("is-live", "is-error");
+        if (type) el.status.classList.add(type);
+    }
+
+    function showToast(message) {
+        clearTimeout(toastTimer);
+        el.toast.textContent = message;
+        el.toast.classList.add("is-visible");
+        toastTimer = window.setTimeout(() => el.toast.classList.remove("is-visible"), 2300);
+    }
+
+    function showPermission(title, message, buttonText = "Enable camera") {
+        el.permissionTitle.textContent = title;
+        el.permissionMessage.textContent = message;
+        el.enableButton.textContent = buttonText;
+        el.permission.classList.remove("is-hidden");
+        el.captureButton.disabled = true;
+    }
+
+    function hidePermission() {
+        el.permission.classList.add("is-hidden");
+    }
+
+    function isInAppBrowser() {
+        return /Instagram|FBAN|FBAV|Line\/|LinkedInApp|Twitter|Snapchat|wv\)/i.test(navigator.userAgent);
+    }
+
+    function cameraErrorMessage(error) {
+        if (isInAppBrowser()) {
+            return "This in-app browser may block camera access. Open the page in Safari or Chrome and try again.";
+        }
+
+        switch (error?.name) {
+            case "NotAllowedError":
+            case "PermissionDeniedError":
+                return "Camera permission is blocked. Allow Camera for this site in your browser settings, then reload the page.";
+            case "NotFoundError":
+            case "DevicesNotFoundError":
+                return "No usable camera was found on this phone.";
+            case "NotReadableError":
+            case "TrackStartError":
+                return "The camera is being used by another app. Close other camera or video apps, then try again.";
+            case "OverconstrainedError":
+            case "ConstraintNotSatisfiedError":
+                return "The selected camera does not support the requested mode.";
+            case "SecurityError":
+                return "Camera access requires a secure HTTPS page opened directly in Safari or Chrome.";
+            default:
+                return error?.message || "The camera could not be opened.";
+        }
+    }
+
+    function stopStream() {
+        if (!stream) return;
+        stream.getTracks().forEach((track) => track.stop());
+        stream = null;
+        el.video.srcObject = null;
+        el.captureButton.disabled = true;
+    }
+
+    function hasLiveVideoTrack() {
+        return Boolean(stream?.getVideoTracks().some((track) => track.readyState === "live"));
+    }
+
+    async function waitForVideoFrame(timeoutMs = 5000) {
+        if (el.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && el.video.videoWidth > 0) {
+            return;
+        }
+
+        await new Promise((resolve, reject) => {
+            let finished = false;
+            const timeout = window.setTimeout(() => finish(new Error("The camera opened but no video frame arrived.")), timeoutMs);
+
+            function finish(error) {
+                if (finished) return;
+                finished = true;
+                window.clearTimeout(timeout);
+                el.video.removeEventListener("loadeddata", ready);
+                el.video.removeEventListener("canplay", ready);
+                error ? reject(error) : resolve();
+            }
+
+            function ready() {
+                if (el.video.videoWidth > 0) finish();
+            }
+
+            el.video.addEventListener("loadeddata", ready);
+            el.video.addEventListener("canplay", ready);
+        });
+    }
+
+    async function populateCameraList(preferredDeviceId = activeDeviceId) {
+        const allDevices = await navigator.mediaDevices.enumerateDevices();
+        devices = allDevices.filter((device) => device.kind === "videoinput");
+        el.cameraSelect.innerHTML = "";
+
+        if (!devices.length) {
+            const option = document.createElement("option");
+            option.value = "";
+            option.textContent = "No cameras found";
+            el.cameraSelect.appendChild(option);
+            el.cameraSelect.disabled = true;
+            el.switchButton.disabled = true;
+            return [];
+        }
+
+        devices.forEach((device, index) => {
+            const option = document.createElement("option");
+            option.value = device.deviceId;
+            option.textContent = device.label || `Camera ${index + 1}`;
+            el.cameraSelect.appendChild(option);
+        });
+
+        const preferredExists = devices.some((device) => device.deviceId === preferredDeviceId);
+        if (preferredExists) activeDeviceId = preferredDeviceId;
+        else if (!activeDeviceId) activeDeviceId = devices[0].deviceId;
+
+        el.cameraSelect.value = activeDeviceId;
+        el.cameraSelect.disabled = false;
+        el.switchButton.disabled = devices.length < 2;
+        return devices;
+    }
+
+    function buildVideoConstraints(deviceId = "") {
+        if (deviceId) {
+            return {
+                deviceId: { exact: deviceId },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            };
+        }
+
+        const constraints = {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+        };
+
+        if (isMobile.matches) {
+            constraints.facingMode = { ideal: facingMode };
+        }
+
+        return constraints;
+    }
+
+    async function startCamera({ deviceId = "", userInitiated = false } = {}) {
+        if (!navigator.mediaDevices?.getUserMedia) {
+            throw new Error("This browser does not support camera access.");
+        }
+
+        if (!window.isSecureContext && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+            throw new Error("Camera access requires HTTPS.");
+        }
+
+        if (isMobile.matches && !userInitiated && !hasLiveVideoTrack()) {
+            showPermission(
+                "Tap to open the camera.",
+                "Phones require a direct tap before the browser can request camera access.",
+                "Enable camera"
+            );
+            return;
+        }
+
+        stopStream();
+        setStatus("Opening camera");
+        el.enableButton.disabled = true;
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: buildVideoConstraints(deviceId),
+                audio: false
+            });
+
+            const videoTrack = stream.getVideoTracks()[0];
+            const settings = videoTrack?.getSettings?.() || {};
+            activeDeviceId = settings.deviceId || deviceId || "";
+            facingMode = settings.facingMode || facingMode;
+
+            el.video.muted = true;
+            el.video.autoplay = true;
+            el.video.setAttribute("playsinline", "");
+            el.video.setAttribute("webkit-playsinline", "");
+            el.video.srcObject = stream;
+
+            try {
+                await el.video.play();
+            } catch (playError) {
+                console.warn("Initial camera playback was paused by the browser:", playError);
+            }
+
+            await waitForVideoFrame();
+            await populateCameraList(activeDeviceId);
+
+            hidePermission();
+            el.captureButton.disabled = false;
+            setStatus(videoTrack?.label || "Camera ready", "is-live");
+        } catch (error) {
+            console.error("Camera start failed:", error);
+            stopStream();
+            setStatus("Camera unavailable", "is-error");
+            showPermission("Camera unavailable.", cameraErrorMessage(error), "Try again");
+            throw error;
+        } finally {
+            el.enableButton.disabled = false;
+        }
+    }
+
+    async function resumeCamera() {
+        if (!hasLiveVideoTrack()) return false;
+
+        try {
+            el.video.muted = true;
+            await el.video.play();
+            await waitForVideoFrame(2500);
+            hidePermission();
+            el.captureButton.disabled = false;
+            return true;
+        } catch (error) {
+            console.warn("Camera resume failed:", error);
+            showPermission(
+                "Tap to resume the camera.",
+                "The browser paused the preview. Tap below to resume it.",
+                "Resume camera"
+            );
+            return false;
+        }
+    }
+
+    function applyPreviewEffects() {
+        el.stage.style.setProperty("--webcam-zoom", String(digitalZoom));
+        el.stage.style.setProperty("--webcam-filter", FILTERS[activeFilter] || "none");
+        el.video.classList.toggle("is-mirrored", mirrored);
+
+        document.querySelectorAll("#webcam-zoom-strip [data-zoom], #webcam-settings-zoom [data-zoom]").forEach((button) => {
+            button.classList.toggle("is-active", Number(button.dataset.zoom) === digitalZoom);
+        });
+
+        el.filterStrip.querySelectorAll("[data-filter]").forEach((button) => {
+            button.classList.toggle("is-active", button.dataset.filter === activeFilter);
+        });
+    }
+
+    function toggleGrid() {
+        gridEnabled = !gridEnabled;
+        el.grid.classList.toggle("is-visible", gridEnabled);
+        el.gridButton.classList.toggle("is-active", gridEnabled);
+        el.gridButton.setAttribute("aria-pressed", String(gridEnabled));
+    }
+
+    function toggleMirror() {
+        mirrored = !mirrored;
+        el.mirrorButton.textContent = mirrored ? "Mirror on" : "Mirror off";
+        el.mirrorButton.setAttribute("aria-pressed", String(mirrored));
+        applyPreviewEffects();
+    }
+
+    function setSettingsOpen(open) {
+        if (open && isMobile.matches) setGalleryOpen(false);
+        el.settings.hidden = !open;
+        el.settingsButton.setAttribute("aria-expanded", String(open));
+        el.settingsButton.classList.toggle("is-active", open);
+    }
+
+    function setGalleryOpen(open) {
+        if (!isMobile.matches) return;
+        if (open) setSettingsOpen(false);
+        el.galleryPanel.classList.toggle("is-open", open);
+        el.galleryPanel.setAttribute("aria-hidden", String(!open));
+        el.galleryBackdrop.classList.toggle("is-open", open);
+        el.galleryBackdrop.setAttribute("aria-hidden", String(!open));
+        document.body.classList.toggle("webcam-gallery-open", open);
+    }
+
+    function canvasToBlob(canvas, type = "image/jpeg", quality = 0.95) {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) resolve(blob);
+                else reject(new Error("The photograph could not be created."));
+            }, type, quality);
+        });
+    }
+
+    function calculateCrop(sourceWidth, sourceHeight) {
+        let width = sourceWidth / digitalZoom;
+        let height = sourceHeight / digitalZoom;
+        let x = (sourceWidth - width) / 2;
+        let y = (sourceHeight - height) / 2;
+        const desiredRatio = RATIOS[ratioIndex].value;
+
+        if (!desiredRatio) return { x, y, width, height };
+
+        if (width / height > desiredRatio) {
+            const adjustedWidth = height * desiredRatio;
+            x += (width - adjustedWidth) / 2;
+            width = adjustedWidth;
+        } else {
+            const adjustedHeight = width / desiredRatio;
+            y += (height - adjustedHeight) / 2;
+            height = adjustedHeight;
+        }
+
+        return { x, y, width, height };
+    }
+
+    async function runCountdown() {
+        if (!timerSeconds) return;
+
+        await new Promise((resolve) => {
+            let remaining = timerSeconds;
+            el.countdown.textContent = String(remaining);
+            el.countdown.classList.add("is-visible");
+
+            const interval = window.setInterval(() => {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    window.clearInterval(interval);
+                    el.countdown.textContent = "";
+                    el.countdown.classList.remove("is-visible");
+                    resolve();
+                    return;
+                }
+                el.countdown.textContent = String(remaining);
+            }, 1000);
+        });
+    }
+
+    function triggerFlash() {
+        el.flash.classList.remove("is-active");
+        void el.flash.offsetWidth;
+        el.flash.classList.add("is-active");
+    }
+
+    async function capturePhoto() {
+        if (captureLocked) return;
+
+        if (!hasLiveVideoTrack()) {
+            showPermission("Open the camera first.", "Tap below to allow camera access.", "Enable camera");
+            return;
+        }
+
+        if (el.video.paused || el.video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+            const resumed = await resumeCamera();
+            if (!resumed) return;
+        }
+
+        captureLocked = true;
+        el.captureButton.disabled = true;
+
+        try {
+            await runCountdown();
+
+            const sourceWidth = el.video.videoWidth;
+            const sourceHeight = el.video.videoHeight;
+            if (!sourceWidth || !sourceHeight) throw new Error("No camera frame is available yet.");
+
+            const crop = calculateCrop(sourceWidth, sourceHeight);
+            el.canvas.width = Math.round(crop.width);
+            el.canvas.height = Math.round(crop.height);
+
+            const context = el.canvas.getContext("2d", { alpha: false });
+            context.save();
+
+            if (mirrored) {
+                context.translate(el.canvas.width, 0);
+                context.scale(-1, 1);
+            }
+
+            context.filter = FILTERS[activeFilter] || "none";
+            context.drawImage(
+                el.video,
+                crop.x,
+                crop.y,
+                crop.width,
+                crop.height,
+                0,
+                0,
+                el.canvas.width,
+                el.canvas.height
+            );
+            context.restore();
+
+            const blob = await canvasToBlob(el.canvas);
+            await savePhoto({
+                id: `${Date.now()}-${crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(16).slice(2)}`,
+                createdAt: Date.now(),
+                width: el.canvas.width,
+                height: el.canvas.height,
+                ratio: RATIOS[ratioIndex].label,
+                filter: activeFilter,
+                digitalZoom,
+                enhanced: false,
+                blob
+            });
+
+            triggerFlash();
+            await renderGallery();
+            showToast("Photograph saved locally");
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || "The photograph could not be saved");
+        } finally {
+            captureLocked = false;
+            el.captureButton.disabled = !hasLiveVideoTrack();
+        }
+    }
+
+    function openDatabase() {
+        if (!("indexedDB" in window)) {
+            return Promise.reject(new Error("Local photo storage is unavailable."));
+        }
+
+        if (databasePromise) return databasePromise;
+
+        databasePromise = new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, 1);
+            request.onupgradeneeded = () => {
+                const database = request.result;
+                if (!database.objectStoreNames.contains(STORE_NAME)) {
+                    const store = database.createObjectStore(STORE_NAME, { keyPath: "id" });
+                    store.createIndex("createdAt", "createdAt");
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error || new Error("Photo storage could not be opened."));
+            request.onblocked = () => reject(new Error("Photo storage is blocked by another tab."));
+        });
+
+        return databasePromise;
+    }
+
+    async function savePhoto(photo) {
+        const database = await openDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(STORE_NAME, "readwrite");
+            transaction.objectStore(STORE_NAME).put(photo);
+            transaction.oncomplete = resolve;
+            transaction.onerror = () => reject(transaction.error || new Error("The photograph could not be stored."));
+        });
+    }
+
+    async function getPhotos() {
+        const database = await openDatabase();
+        return new Promise((resolve, reject) => {
+            const request = database.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).getAll();
+            request.onsuccess = () => resolve((request.result || []).sort((a, b) => b.createdAt - a.createdAt));
+            request.onerror = () => reject(request.error || new Error("Saved photographs could not be loaded."));
+        });
+    }
+
+    async function deletePhoto(id) {
+        const database = await openDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(STORE_NAME, "readwrite");
+            transaction.objectStore(STORE_NAME).delete(id);
+            transaction.oncomplete = resolve;
+            transaction.onerror = () => reject(transaction.error || new Error("The photograph could not be deleted."));
+        });
+    }
+
+    async function clearPhotos() {
+        const database = await openDatabase();
+        return new Promise((resolve, reject) => {
+            const transaction = database.transaction(STORE_NAME, "readwrite");
+            transaction.objectStore(STORE_NAME).clear();
+            transaction.oncomplete = resolve;
+            transaction.onerror = () => reject(transaction.error || new Error("The archive could not be cleared."));
+        });
+    }
+
+    async function blobToImage(blob) {
+        return new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(blob);
+            const image = new Image();
+            image.onload = () => {
+                URL.revokeObjectURL(url);
+                resolve(image);
+            };
+            image.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error("The photograph could not be processed."));
+            };
+            image.src = url;
+        });
+    }
+
+    async function toggleEnhancement(photo) {
+        if (photo.enhanced && photo.originalBlob) {
+            photo.blob = photo.originalBlob;
+            photo.originalBlob = null;
+            photo.enhanced = false;
+            await savePhoto(photo);
+            await renderGallery();
+            showToast("Original photograph restored");
+            return;
+        }
+
+        const image = await blobToImage(photo.blob);
+        const canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const context = canvas.getContext("2d", { alpha: false });
+        context.filter = "brightness(1.035) contrast(1.09) saturate(1.12)";
+        context.drawImage(image, 0, 0);
+        const enhancedBlob = await canvasToBlob(canvas, "image/jpeg", 0.96);
+
+        photo.originalBlob = photo.blob;
+        photo.blob = enhancedBlob;
+        photo.enhanced = true;
+        await savePhoto(photo);
+        await renderGallery();
+        showToast("Photograph enhanced");
+    }
+
+    function revokeObjectUrls() {
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        objectUrls = [];
+    }
+
+    function fileName(createdAt, suffix = "") {
+        const date = new Date(createdAt);
+        const pad = (value) => String(value).padStart(2, "0");
+        return `web-cam_${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}_${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}${suffix}.jpg`;
+    }
+
+    function downloadBlob(blob, name) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1400);
+    }
+
+    function emptyGallery() {
+        const element = document.createElement("div");
+        element.className = "webcam-empty-gallery";
+        element.innerHTML = "<span>04</span><strong>Your archive is empty.</strong><p>Use the shutter to create a photograph. Nothing leaves this browser.</p>";
+        return element;
+    }
+
+    function photoCard(photo, url) {
+        const card = document.createElement("article");
+        card.className = "webcam-photo-card";
+
+        const image = document.createElement("img");
+        image.src = url;
+        image.alt = `Photograph taken ${new Date(photo.createdAt).toLocaleString()}`;
+        image.loading = "lazy";
+
+        const meta = document.createElement("div");
+        meta.className = "webcam-photo-meta";
+
+        const time = document.createElement("time");
+        time.className = "webcam-photo-time";
+        time.dateTime = new Date(photo.createdAt).toISOString();
+        time.textContent = `${new Date(photo.createdAt).toLocaleString()} · ${photo.ratio || "4:3"}${photo.enhanced ? " · Enhanced" : ""}`;
+
+        const actions = document.createElement("div");
+        actions.className = "webcam-photo-actions";
+
+        const download = document.createElement("button");
+        download.type = "button";
+        download.className = "webcam-photo-download";
+        download.textContent = "Download";
+        download.addEventListener("click", () => downloadBlob(photo.blob, fileName(photo.createdAt)));
+
+        const enhance = document.createElement("button");
+        enhance.type = "button";
+        enhance.className = "webcam-photo-enhance";
+        enhance.textContent = photo.enhanced ? "Restore" : "Enhance";
+        enhance.addEventListener("click", async () => {
+            enhance.disabled = true;
+            try {
+                await toggleEnhancement(photo);
+            } catch (error) {
+                console.error(error);
+                showToast("Enhancement failed");
+                enhance.disabled = false;
+            }
+        });
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "webcam-photo-delete";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", "Delete photograph");
+        remove.addEventListener("click", async () => {
+            await deletePhoto(photo.id);
+            await renderGallery();
+            showToast("Photograph deleted");
+        });
+
+        actions.append(download, enhance, remove);
+        meta.append(time, actions);
+        card.append(image, meta);
+        return card;
+    }
+
+    function updateThumbnail(photo, url) {
+        el.galleryButton.innerHTML = "";
+        if (!photo || !url) {
+            const empty = document.createElement("span");
+            empty.className = "webcam-empty-thumbnail";
+            empty.textContent = "04";
+            el.galleryButton.appendChild(empty);
+            return;
+        }
+
+        const image = document.createElement("img");
+        image.src = url;
+        image.alt = "Open saved photographs";
+        el.galleryButton.appendChild(image);
+    }
+
+    async function renderGallery() {
+        try {
+            const photos = await getPhotos();
+            revokeObjectUrls();
+            el.gallery.innerHTML = "";
+            el.photoCount.textContent = `${photos.length} saved`;
+            el.downloadAll.disabled = photos.length === 0;
+            el.deleteAll.disabled = photos.length === 0;
+
+            if (!photos.length) {
+                el.gallery.appendChild(emptyGallery());
+                updateThumbnail(null, null);
+                return;
+            }
+
+            photos.forEach((photo, index) => {
+                const url = URL.createObjectURL(photo.blob);
+                objectUrls.push(url);
+                el.gallery.appendChild(photoCard(photo, url));
+                if (index === 0) updateThumbnail(photo, url);
+            });
+        } catch (error) {
+            console.error(error);
+            el.gallery.innerHTML = "";
+            el.gallery.appendChild(emptyGallery());
+            showToast("Local photo storage is unavailable");
+        }
+    }
+
+    async function switchCamera() {
+        if (devices.length > 1) {
+            const currentIndex = Math.max(0, devices.findIndex((device) => device.deviceId === activeDeviceId));
+            const nextDevice = devices[(currentIndex + 1) % devices.length];
+            await startCamera({ deviceId: nextDevice.deviceId, userInitiated: true });
+            return;
+        }
+
+        facingMode = facingMode === "user" ? "environment" : "user";
+        await startCamera({ userInitiated: true });
+    }
+
+    listen(el.enableButton, "click", async () => {
+        setGalleryOpen(false);
+        setSettingsOpen(false);
+        try {
+            if (hasLiveVideoTrack()) await resumeCamera();
+            else await startCamera({ userInitiated: true });
+        } catch {
+            // The visible permission panel already explains the failure.
+        }
+    });
+
+    listen(el.captureButton, "click", capturePhoto);
+    listen(el.switchButton, "click", async () => {
+        el.switchButton.disabled = true;
+        try {
+            await switchCamera();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            el.switchButton.disabled = devices.length < 2 && !isMobile.matches;
+        }
+    });
+
+    listen(el.gridButton, "click", toggleGrid);
+    listen(el.mirrorButton, "click", toggleMirror);
+
+    listen(el.timerButton, "click", () => {
+        const values = [0, 3, 5, 10];
+        timerSeconds = values[(values.indexOf(timerSeconds) + 1) % values.length];
+        el.timerLabel.textContent = `${timerSeconds}s`;
+        el.timerButton.classList.toggle("is-active", timerSeconds > 0);
+        el.timerButton.title = timerSeconds ? `Timer ${timerSeconds} seconds` : "Timer off";
+        showToast(timerSeconds ? `${timerSeconds}-second timer` : "Timer disabled");
+    });
+
+    listen(el.ratioButton, "click", () => {
+        ratioIndex = (ratioIndex + 1) % RATIOS.length;
+        const ratio = RATIOS[ratioIndex];
+        el.stage.dataset.ratio = ratio.key;
+        el.ratioLabel.textContent = ratio.label;
+        el.ratioButton.classList.toggle("is-active", ratioIndex !== 0);
+        showToast(`Photo ratio ${ratio.label}`);
+    });
+
+    listen(el.settingsButton, "click", () => setSettingsOpen(el.settings.hidden));
+    listen(el.settingsClose, "click", () => setSettingsOpen(false));
+    listen(el.galleryButton, "click", () => setGalleryOpen(true));
+    listen(el.galleryClose, "click", () => setGalleryOpen(false));
+    listen(el.galleryBackdrop, "click", () => setGalleryOpen(false));
+
+    listen(el.downloadAll, "click", async () => {
+        const photos = await getPhotos();
+        for (let index = 0; index < photos.length; index += 1) {
+            downloadBlob(photos[index].blob, fileName(photos[index].createdAt, `_${index + 1}`));
+            await new Promise((resolve) => window.setTimeout(resolve, 180));
+        }
+        if (photos.length) showToast(`Downloading ${photos.length} photographs`);
+    });
+
+    listen(el.deleteAll, "click", async () => {
+        const photos = await getPhotos();
+        if (!photos.length) return;
+        if (!window.confirm(`Delete all ${photos.length} photographs from this browser?`)) return;
+        await clearPhotos();
+        await renderGallery();
+        showToast("Local archive cleared");
+    });
+
+    listen(el.refreshButton, "click", async () => {
+        el.refreshButton.disabled = true;
+        try {
+            const cameraList = await populateCameraList(activeDeviceId);
+            showToast(`${cameraList.length} ${cameraList.length === 1 ? "camera" : "cameras"} detected`);
+        } catch (error) {
+            console.error(error);
+            showToast(cameraErrorMessage(error));
+        } finally {
+            el.refreshButton.disabled = false;
+        }
+    });
+
+    listen(el.cameraSelect, "change", async () => {
+        const nextDeviceId = el.cameraSelect.value;
+        if (!nextDeviceId || nextDeviceId === activeDeviceId) return;
+        el.cameraSelect.disabled = true;
+        try {
+            await startCamera({ deviceId: nextDeviceId, userInitiated: true });
+        } catch {
+            await populateCameraList(activeDeviceId).catch(() => {});
+        } finally {
+            el.cameraSelect.disabled = false;
+        }
+    });
+
+    listen(el.filterStrip, "click", (event) => {
+        const button = event.target.closest("[data-filter]");
+        if (!button) return;
+        const requestedFilter = button.dataset.filter;
+        activeFilter = FILTERS[requestedFilter] ? requestedFilter : "none";
+        applyPreviewEffects();
+        showToast(`${activeFilter === "none" ? "Natural" : activeFilter} filter`);
+    });
+
+    const zoomClick = (event) => {
+        const button = event.target.closest("[data-zoom]");
+        if (!button) return;
+        digitalZoom = Math.max(1, Math.min(2, Number(button.dataset.zoom) || 1));
+        applyPreviewEffects();
+        showToast(`Digital zoom ${digitalZoom.toFixed(digitalZoom % 1 ? 1 : 0)}×`);
+    };
+
+    listen(el.zoomStrip, "click", zoomClick);
+    listen(el.settingsZoom, "click", zoomClick);
+
+    listen(el.stage, "click", async (event) => {
+        if (event.target.closest("button, select, .webcam-settings")) return;
+        if (hasLiveVideoTrack() && el.video.paused) await resumeCamera();
+    });
+
+    listen(document, "visibilitychange", () => {
+        if (document.visibilityState === "visible" && hasLiveVideoTrack()) {
+            window.setTimeout(resumeCamera, 120);
+        }
+    });
+
+    listen(window, "pageshow", () => {
+        if (hasLiveVideoTrack()) window.setTimeout(resumeCamera, 120);
+    });
+
+    listen(document, "keydown", (event) => {
+        const activeElement = document.activeElement;
+        if (activeElement?.matches("input, textarea, select") || activeElement?.isContentEditable) return;
+
+        if (event.code === "Space") {
+            event.preventDefault();
+            capturePhoto();
+        } else if (event.key.toLowerCase() === "g") {
+            toggleGrid();
+        } else if (event.key.toLowerCase() === "m") {
+            toggleMirror();
+        } else if (event.key.toLowerCase() === "s") {
+            setSettingsOpen(el.settings.hidden);
+        } else if (event.key === "Escape") {
+            setSettingsOpen(false);
+            setGalleryOpen(false);
+        }
+    });
+
+    const deviceChangeHandler = () => populateCameraList(activeDeviceId).catch(console.error);
+    navigator.mediaDevices?.addEventListener?.("devicechange", deviceChangeHandler);
+
+    function initialize() {
+        setGalleryOpen(false);
+        setSettingsOpen(false);
+        el.video.muted = true;
+        el.video.setAttribute("playsinline", "");
+        el.video.setAttribute("webkit-playsinline", "");
+        applyPreviewEffects();
+        renderGallery();
+
+        if (isMobile.matches) {
+            setStatus("Tap to enable camera");
+            showPermission(
+                "Tap to open the camera.",
+                isInAppBrowser()
+                    ? "Open this page in Safari or Chrome, then tap Enable camera."
+                    : "Your phone will ask for camera permission after you tap the button.",
+                "Enable camera"
+            );
+        } else {
+            startCamera({ userInitiated: true }).catch(() => {});
+        }
+    }
+
+    initialize();
+
+    window.destroyWebcam = () => {
+        if (destroyed) return;
+        destroyed = true;
+        clearTimeout(toastTimer);
+        stopStream();
+        revokeObjectUrls();
+        removeListeners.forEach((remove) => remove());
+        navigator.mediaDevices?.removeEventListener?.("devicechange", deviceChangeHandler);
+        delete window.destroyWebcam;
+    };
+})();
