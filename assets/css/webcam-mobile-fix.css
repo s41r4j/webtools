@@ -1,0 +1,149 @@
+@media (max-width: 760px) {
+    body[data-route="webcam"] {
+        overscroll-behavior: none;
+    }
+
+    .webcam-gallery-panel {
+        height: min(78dvh, 760px);
+        min-height: min(62dvh, 560px);
+        max-height: none;
+        overflow: hidden;
+        gap: 0;
+        padding:
+            12px
+            14px
+            max(18px, env(safe-area-inset-bottom));
+    }
+
+    .webcam-gallery-panel::before {
+        content: "";
+        flex: 0 0 auto;
+        width: 44px;
+        height: 4px;
+        margin: 0 auto 12px;
+        border-radius: 999px;
+        background: var(--rule-strong);
+    }
+
+    .webcam-gallery-head {
+        flex: 0 0 auto;
+        align-items: center;
+        padding: 0 2px 13px;
+    }
+
+    .webcam-gallery-head h3 {
+        font-size: clamp(1.7rem, 8vw, 2.25rem);
+        line-height: 1;
+    }
+
+    .webcam-gallery-head > div > p:last-child {
+        margin-top: 5px;
+    }
+
+    .webcam-gallery-panel .webcam-close-button {
+        width: 42px;
+        height: 42px;
+        border-color: var(--rule-strong);
+        background: var(--paper);
+        color: var(--accent);
+        box-shadow: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .webcam-gallery-panel .webcam-close-button:focus,
+    .webcam-gallery-panel .webcam-close-button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        box-shadow: none;
+    }
+
+    .webcam-gallery-actions {
+        flex: 0 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .webcam-gallery-actions .tool-button {
+        width: 100%;
+        min-height: 42px;
+        margin: 0;
+    }
+
+    .webcam-gallery {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        align-content: start;
+        padding: 0 2px 8px;
+        scrollbar-width: thin;
+    }
+
+    .webcam-empty-gallery {
+        min-height: 100%;
+    }
+
+    .webcam-photo-card {
+        min-width: 0;
+    }
+
+    .webcam-photo-meta {
+        padding: 8px;
+    }
+
+    .webcam-photo-actions {
+        gap: 5px;
+    }
+
+    .webcam-photo-actions button {
+        min-height: 35px;
+        padding-inline: 8px;
+    }
+
+    .webcam-gallery-backdrop {
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+
+    .webcam-gallery-backdrop.is-open {
+        opacity: 0.72;
+    }
+
+    .webcam-settings {
+        height: min(74dvh, 680px);
+        max-height: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .webcam-settings::before {
+        content: "";
+        display: block;
+        width: 44px;
+        height: 4px;
+        margin: -5px auto 12px;
+        border-radius: 999px;
+        background: var(--rule-strong);
+    }
+}
+
+@media (max-width: 390px) {
+    .webcam-gallery-panel {
+        height: 82dvh;
+        min-height: 68dvh;
+    }
+
+    .webcam-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .webcam-photo-card img {
+        aspect-ratio: 4 / 3;
+    }
+}
