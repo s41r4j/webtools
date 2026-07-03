@@ -1,38 +1,68 @@
 @media (max-width: 760px) {
     body[data-route="webcam"] {
         overscroll-behavior: none;
+        touch-action: manipulation;
+    }
+
+    /* Closed overlays must not sit invisibly above the shutter. */
+    .webcam-gallery-panel:not(.is-open) {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateY(100%) !important;
     }
 
     .webcam-gallery-panel {
-        height: min(78dvh, 760px);
-        min-height: min(62dvh, 560px);
-        max-height: none;
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
+        max-height: 100dvh;
         overflow: hidden;
         gap: 0;
         padding:
-            12px
+            max(12px, env(safe-area-inset-top))
             14px
             max(18px, env(safe-area-inset-bottom));
+        border: 0;
+        border-radius: 0;
+        background: var(--paper-strong);
+        box-shadow: none;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(100%);
+        transition:
+            transform 0.24s cubic-bezier(.22,.78,.27,1),
+            opacity 0.18s ease,
+            visibility 0s linear 0.24s;
+    }
+
+    .webcam-gallery-panel.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+        transition:
+            transform 0.24s cubic-bezier(.22,.78,.27,1),
+            opacity 0.18s ease,
+            visibility 0s;
     }
 
     .webcam-gallery-panel::before {
-        content: "";
-        flex: 0 0 auto;
-        width: 44px;
-        height: 4px;
-        margin: 0 auto 12px;
-        border-radius: 999px;
-        background: var(--rule-strong);
+        display: none;
     }
 
     .webcam-gallery-head {
         flex: 0 0 auto;
         align-items: center;
-        padding: 0 2px 13px;
+        padding: 4px 2px 14px;
     }
 
     .webcam-gallery-head h3 {
-        font-size: clamp(1.7rem, 8vw, 2.25rem);
+        font-size: clamp(1.85rem, 8vw, 2.45rem);
         line-height: 1;
     }
 
@@ -41,8 +71,8 @@
     }
 
     .webcam-gallery-panel .webcam-close-button {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-color: var(--rule-strong);
         background: var(--paper);
         color: var(--accent);
@@ -67,7 +97,7 @@
 
     .webcam-gallery-actions .tool-button {
         width: 100%;
-        min-height: 42px;
+        min-height: 44px;
         margin: 0;
     }
 
@@ -101,21 +131,26 @@
     }
 
     .webcam-photo-actions button {
-        min-height: 35px;
+        min-height: 36px;
         padding-inline: 8px;
     }
 
-    .webcam-gallery-backdrop {
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
+    /* A full-screen gallery does not need a second dark backdrop. */
+    .webcam-gallery-backdrop,
+    .webcam-gallery-backdrop.is-open {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 
-    .webcam-gallery-backdrop.is-open {
-        opacity: 0.72;
+    .webcam-settings[hidden] {
+        display: none !important;
+        pointer-events: none !important;
     }
 
     .webcam-settings {
-        height: min(74dvh, 680px);
+        z-index: 130;
+        height: min(78dvh, 700px);
         max-height: none;
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -131,14 +166,30 @@
         border-radius: 999px;
         background: var(--rule-strong);
     }
+
+    /* Keep the camera controls above the video and always clickable. */
+    .webcam-bottom-ui {
+        z-index: 20;
+        pointer-events: none;
+    }
+
+    .webcam-bottom-ui button,
+    .webcam-bottom-ui .webcam-filter-strip,
+    .webcam-bottom-ui .webcam-zoom-strip {
+        pointer-events: auto;
+    }
+
+    .webcam-shutter {
+        position: relative;
+        z-index: 2;
+    }
+
+    .webcam-permission {
+        z-index: 140;
+    }
 }
 
 @media (max-width: 390px) {
-    .webcam-gallery-panel {
-        height: 82dvh;
-        min-height: 68dvh;
-    }
-
     .webcam-gallery {
         grid-template-columns: 1fr;
     }
