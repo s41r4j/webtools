@@ -7,35 +7,47 @@
     <meta name="theme-color" content="#f5efe4">
     <title>Web Tools</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260703-2">
 </head>
 
 <body>
     <div class="app-shell">
-        <aside class="site-rail">
-            <a href="/" onclick="route(event)" class="brand-mark">
-                <p class="brand-kicker">Field Notes Edition</p>
-                <h1 class="brand-title">Web Tools</h1>
-                <p class="brand-copy">Browser utilities, encoding worksheets, and link experiments arranged like a quiet paper desk.</p>
-            </a>
+        <aside id="site-rail" class="site-rail">
+            <div class="rail-header">
+                <a href="/" onclick="route(event)" class="brand-mark">
+                    <span class="brand-compact" aria-hidden="true">WT</span>
+                    <span class="brand-full">
+                        <span class="brand-kicker">Field Notes Edition</span>
+                        <span class="brand-title">Web Tools</span>
+                        <span class="brand-copy">Browser utilities, encoding worksheets, and link experiments arranged like a quiet paper desk.</span>
+                    </span>
+                </a>
 
-            <nav class="site-nav" aria-label="Primary">
-                <a href="/" onclick="route(event)" data-route="/" data-index="00">Desk Index</a>
-                <a href="/browser-fingerprinting" onclick="route(event)" data-route="/browser-fingerprinting" data-index="01">Fingerprinting</a>
-                <a href="/cryptography" onclick="route(event)" data-route="/cryptography" data-index="02">Cryptography</a>
-                <a href="/psychology" onclick="route(event)" data-route="/psychology" data-index="03">Psychology</a>
-                <a href="/webcam" onclick="route(event)" data-route="/webcam" data-index="04">Web Cam</a>
-            </nav>
-
-            <div class="rail-actions">
-                <button id="btn-back" class="rail-btn rail-btn--ghost" onclick="goBack()" hidden>Back</button>
-                <button id="btn-theme" class="rail-btn rail-btn--accent" onclick="toggleTheme()">Night Ink</button>
+                <button id="btn-rail-toggle" class="rail-toggle" type="button" aria-controls="rail-content" aria-expanded="true" title="Collapse side panel">
+                    <span class="rail-toggle-icon" aria-hidden="true">‹</span>
+                    <span class="sr-only">Toggle side panel</span>
+                </button>
             </div>
 
-            <section class="route-note" aria-live="polite">
-                <p id="route-kicker" class="route-kicker">Desk Index</p>
-                <p id="route-summary" class="route-summary">A paper-organized collection of utilities that run directly in the browser.</p>
-            </section>
+            <div id="rail-content" class="rail-content">
+                <nav class="site-nav" aria-label="Primary">
+                    <a href="/" onclick="route(event)" data-route="/" data-index="00">Desk Index</a>
+                    <a href="/browser-fingerprinting" onclick="route(event)" data-route="/browser-fingerprinting" data-index="01">Fingerprinting</a>
+                    <a href="/cryptography" onclick="route(event)" data-route="/cryptography" data-index="02">Cryptography</a>
+                    <a href="/psychology" onclick="route(event)" data-route="/psychology" data-index="03">Psychology</a>
+                    <a href="/webcam" onclick="route(event)" data-route="/webcam" data-index="04">Web Cam</a>
+                </nav>
+
+                <div class="rail-actions">
+                    <button id="btn-back" class="rail-btn rail-btn--ghost" onclick="goBack()" hidden>Back</button>
+                    <button id="btn-theme" class="rail-btn rail-btn--accent" onclick="toggleTheme()">Night Ink</button>
+                </div>
+
+                <section class="route-note" aria-live="polite">
+                    <p id="route-kicker" class="route-kicker">Desk Index</p>
+                    <p id="route-summary" class="route-summary">A paper-organized collection of utilities that run directly in the browser.</p>
+                </section>
+            </div>
         </aside>
 
         <main class="page-stage">
@@ -53,7 +65,7 @@
         </main>
     </div>
 
-    <script src="assets/js/router.js"></script>
+    <script src="assets/js/router.js?v=20260703-2"></script>
 </body>
 
 </html>
